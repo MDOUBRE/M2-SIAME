@@ -1,0 +1,10 @@
+v 4
+file . "test_sequential.vhd" "405aada1cd0d48ef8d9f9c5a9f71ae9f48b6aa90" "20211014132910.073":
+  entity test_reg at 1( 0) + 0 on 274;
+  architecture arch_test_reg of test_reg at 8( 104) + 0 on 275;
+file . "sequential.vhd" "1cc3f1b556858b9b4c9f0e3bde6cc0a0255f08e2" "20211014132910.044":
+  package bus_mux_pkg at 1( 0) + 0 on 269;
+  entity reg at 13( 263) + 0 on 270;
+  architecture arch_reg of reg at 25( 496) + 0 on 271;
+  entity registerbank at 42( 754) + 0 on 272;
+  architecture arch_bankreg of registerbank at 61( 1235) + 0 on 273;
