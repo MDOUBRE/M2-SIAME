@@ -47,14 +47,14 @@ USE work.bus_mux_pkg.ALL;
 ENTITY RegisterBank IS
 	PORT
 	(
-		s_reg_0 : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
-		data_o_0 : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-		s_reg_1 : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
-		data_o_1 : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-		dest_reg : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
-		data_i : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-		wr_reg : IN STD_LOGIC;
-		clk : IN STD_LOGIC
+		s_reg_0 	: in std_logic_vector(4 DOWNTO 0);
+		data_o_0 	: out std_logic_vector(31 DOWNTO 0); 
+		s_reg_1 	: in std_logic_vector(4 DOWNTO 0);
+		data_o_1 	: out std_logic_vector(31 DOWNTO 0);
+		dest_reg 	: in std_logic_vector(4 DOWNTO 0);
+		data_i 		: in std_logic_vector(31 DOWNTO 0);
+		wr_reg 		: in std_logic;
+		clk 		: in std_logic
 	);
 END ENTITY RegisterBank;
 
@@ -63,15 +63,16 @@ architecture arch_BankReg of RegisterBank is
 
 begin
 
---data_o_0 <= REGS(conv_integer(s_reg_0)) WHEN s_reg_0 /= std_logic_vector(others => '0') else
---	(others => '0');
-data_o_1 <= REGS(conv_integer(s_reg_1));
+data_o_0 <= REGS(to_integer(unsigned(s_reg_0))) WHEN s_reg_0 /= std_logic_vector(to_unsigned(0,5)) else
+	(others => '0');
+data_o_1 <= REGS(to_integer(unsigned(s_reg_1))) WHEN s_reg_1 /= std_logic_vector(to_unsigned(0,5)) else
+	(others => '0');
 
 P_REG32: process(clk)
 begin
 	if(rising_edge(clk)) then 
 		if(wr_reg='1') then
-			REGS(conv_integer(dest_reg)) <= data_i;
+			REGS(to_integer(unsigned(dest_reg))) <= data_i;
 		end if;
 	end if;
 end process P_REG32;

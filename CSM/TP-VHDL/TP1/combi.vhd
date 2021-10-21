@@ -16,6 +16,16 @@ entity mux4_1 is
     );
 end entity;
 
+architecture multiplexeur of mux4_1 is
+begin
+
+reg_out <= reg0 WHEN c = "00" else
+           reg1 WHEN c = "01" else
+           reg2 WHEN c = "10" else
+           reg3;
+          
+end multiplexeur;
+
 ----------------------------------------------------
 
 --Simple adder for 32 bit words
@@ -30,6 +40,13 @@ entity add is
     reg3 : out std_logic_vector(31 downto 0)
     );
 end entity;
+
+architecture additionneur of add is
+begin
+
+reg3 <= std_logic_vector(to_integer(unsigned(reg1)) + to_integer(unsigned(reg2)));  
+
+end additionneur;
 
 ------------------------------------------------------
 
