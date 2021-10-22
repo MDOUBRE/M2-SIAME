@@ -44,7 +44,7 @@ end entity;
 architecture additionneur of add is
 begin
 
-reg3 <= std_logic_vector(to_integer(unsigned(reg1)) + to_integer(unsigned(reg2)));  
+reg3 <= std_logic_vector(unsigned(reg1) + unsigned(reg2));  
 
 end additionneur;
 
