@@ -51,6 +51,24 @@ end additionneur;
 ------------------------------------------------------
 
 -- Full 32b adder with carry bits out
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.NUMERIC_STD.ALL;
+
+entity addCarry1 is
+  port(
+    A, B, cin: in std_logic;
+    s, cout: out std_logic);
+end entity;
+
+architecture addRet1 of addCarry1 is
+begin
+
+  s <= (A xor B) xor cin;
+  cout <= (A and B) or (A and cin) or (B and cin);
+
+end addRet1;
+
 
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
@@ -64,6 +82,20 @@ entity addCarry is
     c30, c31: out std_logic);
 end entity;
 
+architecture additionneurRetenue of addCarry is
+
+  signal c : std_logic_vector(32 downto 0);
+
+begin
+  c(0) <= cin;
+  c30 <= c(31);
+  c31 <= c(32);
+
+  G : for i in 0 to 31 generate
+    inst : entity work.addCarry1 port map(A(i), B(i), c(i), s(i), c(i+1));
+  end generate;
+
+end additionneurRetenue;
 
 -----------------------------------------------
 
@@ -82,6 +114,30 @@ entity BarrelShifter IS
     );
 end entity;
 
+architecture barrelShift of BarrelShifter is
+
+  signal tab : std_logic_vector(95 downto 0);
+
+begin
+
+  g1 : for i in 0 to 31 generate  
+    tab(i) <= '0';
+  end generate;
+  g2 : for i in 32 to 63 generate
+    tab(i) <= A(i-32);
+  end generate;
+  g3 : for i in 64 to 95 generate
+    tab(i) <= '0';
+  end generate;
+
+  g4 : for i in 32 to 63 generate
+    SL(i-32) <= tab(i-to_integer(unsigned(ValDec)));
+  end generate;
+  g5 : for i in 32 to 63 generate
+    SR(i-32) <= tab(i+to_integer(unsigned(ValDec)));
+  end generate;
+
+end barrelShift;
 
 ---------------------------------------------------
 

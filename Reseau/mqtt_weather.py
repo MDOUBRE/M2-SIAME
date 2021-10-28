@@ -67,9 +67,7 @@ MQTT_QOS=0 # (default) no ACK from server
 MQTT_USER=""
 MQTT_PASSWD=""
 
-# Measurement related
-# seconds between each measure.
-measure_interleave = 5
+
 
 client      = None
 timer       = None
@@ -178,10 +176,13 @@ def on_message(client, userdata, msg):
         log.warning("humidity is %s %s" % (payload['value'],payload['value_units']))
     if(msg.topic == "1R1/014/temperature"):
         log.warning("temperature is %s %s" % (payload['value'],payload['value_units']))
-    if(msg.topic == "1R1/014/pressure"):
+    if(msg.topic == "1R1/014/pressure"):        
         log.warning("pressure is %s %s" % (payload['value'],payload['value_units']))
-    #if(msg.topic == "1R1/014/meteo"):
-    #    log.warning("Luminosite is %s %s" % (payload['value'],payload['value_units']))
+    if(msg.topic == "1R1/014/meteo"):
+        log.warning("Luminosite is %s %s" % (payload['value1'],payload['value_units1']))
+        log.warning("humidity is %s %s" % (payload['value2'],payload['value_units2']))
+        log.warning("temperature is %s %s" % (payload['value3'],payload['value_units3']))
+        log.warning("pressure is %s %s" % (payload['value4'],payload['value_units4']))
 
     # TO BE CONTINUED
     log.warning("TODO: process incoming message!")
@@ -202,52 +203,72 @@ def on_log(mosq, obj, level, string):
 # --- neOCampus related functions ---------------------------------------------
 # Acquire sensors and publish
 def publishMeteo():
-    file1 = open("illum.txt", "r")
-    meteo=file1.readlines()
+    file1   = open("illum.txt", "r")
+    illum   = file1.readline()
     file1.close()
+    
+    file2   = open("hum.txt", "r")
+    hum     = file2.readline()
+    file2.close()
+    
+    file3   = open("temperature.txt", "r")
+    temp    = file3.readline()
+    file3.close()
+    
+    file4   = open("air_press.txt", "r")
+    air_p   = file4.readline()
+    file4.close()
+    
 
-    log.debug("RPi meteo = " + meteo)
+    log.warning("Luminosité = " + str(illum) + " lx\nHumidité = " + str(hum) + " %\nTempérature = " + str(temp) + " °C\nPression = " + str(air_p) + " mb")
     # generate json payload
     jsonFrame = { }
-    jsonFrame['value'] = json.loads(meteo)
-    jsonFrame['value_units'] = 'celsius'
+    jsonFrame['value1'] = json.loads(illum)
+    jsonFrame['value_units1'] = 'lx'
+    jsonFrame['value2'] = json.loads(hum)
+    jsonFrame['value_units2'] = '%'
+    jsonFrame['value3'] = json.loads(temp)
+    jsonFrame['value_units3'] = 'celsius'
+    jsonFrame['value4'] = json.loads(air_p)
+    jsonFrame['value_units4'] = 'mb'
     # ... and publish it!
     client.publish(MQTT_PUB_METEO, json.dumps(jsonFrame), MQTT_QOS)
+    log.warning("Le publish est terminé")
 
 def publishTemperature():
     file2 = open("temperature.txt", "r")
     temperature=file2.readline()
     file2.close()
 
-    log.debug("RPi temperature = " + temperature)
+    log.warning("Temperature = " + str(temperature) + "°C")
     # generate json payload
     jsonFrame = { }
     jsonFrame['value'] = json.loads(temperature)
     jsonFrame['value_units'] = 'celsius'
     # ... and publish it!
     client.publish(MQTT_PUB_TEMP, json.dumps(jsonFrame), MQTT_QOS)
+    log.warning("Le publish est terminé")
 
 def publishHumidity():
     file3 = open("hum.txt", "r")
     humidity=file3.readline()
     file3.close()
-    
-    print(str(humidity) + "\n")
 
-    log.debug("RPi humidite = " + humidity)
+    log.warning("Humidite = " + humidity + " %")
     # generate json payload
     jsonFrame = { }
     jsonFrame['value'] = json.loads(humidity)
     jsonFrame['value_units'] = '%'
     # ... and publish it!
     client.publish(MQTT_PUB_HUM, json.dumps(jsonFrame), MQTT_QOS)
+    log.warning("Le publish est terminé")
 
 def publishLuminosity():
     file4 = open("illum.txt", "r")
     luminosity=file4.readline()
     file4.close()
 
-    log.warning("Luminosity = " + luminosity)
+    log.warning("Luminosity = " + luminosity + " lx")
     # generate json payload
     jsonFrame = { }
     jsonFrame['value'] = json.loads(luminosity)
@@ -261,13 +282,14 @@ def publishPressure():
     pressure=file5.readline()
     file5.close()
 
-    log.debug("RPi pression d'air = " + pressure)
+    log.warning("Pression d'air = " + pressure + " mb")
     # generate json payload
     jsonFrame = { }
     jsonFrame['value'] = json.loads(pressure)
     jsonFrame['value_units'] = 'mb'
     # ... and publish it!
     client.publish(MQTT_PUB_PRESS, json.dumps(jsonFrame), MQTT_QOS)
+    log.warning("Le publish est terminé")
 
 
 #################################################################################
@@ -281,7 +303,7 @@ def publishPressure():
 def main():
 
     # Global variables
-    global client, timer, log
+    global client, timer, log, fin
 
     #
     log.info("\n###\nSample application to publish RPI's temperature to [%s]\non server %s:%d" % (MQTT_PUB_LUM,str(MQTT_SERVER),MQTT_PORT))
@@ -302,7 +324,7 @@ def main():
 
     # Start MQTT operations
     client.connect(MQTT_SERVER, MQTT_PORT, 60)
-    while True:
+    while __shutdown == False:
         client.loop(timeout=2.0, max_packets=1)
 
 
