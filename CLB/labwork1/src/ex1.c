@@ -49,16 +49,6 @@ int main()
 	while(1)
 	{
 		for(int i=0;i<HALF_PERIOD;i++)__asm("nop");
-		/*
-		{
-			if(a== HALF_PERIOD)
-			{
-				printf("a");
-				a=0;
-			}
-			a=a+1;
-		}
-		*/
 		
 		switch(state){
 		case DEB :
