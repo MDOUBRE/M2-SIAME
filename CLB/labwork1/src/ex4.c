@@ -14,12 +14,16 @@
 
 #define WAIT_PSC 1000
 #define WAIT_DELAY (APB1_CLK / WAIT_PSC)
-int HALF_PERIOD = WAIT_DELAY;
+#define DELAY_20 (WAIT_DELAY/100)
+#define DELAY_250 (WAIT_DELAY/4)
+#define DELAY_500 (WAIT_DELAY/2)
+#define DELAY_1000 (WAIT_DELAY)
 
 // GPIODA
 #define USER_BUT	0
 
 int pushed_B1=0;
+int last_B1=0;
 
 void init(){
 	// output 
@@ -36,7 +40,7 @@ void init(){
 void init_TIM4(){
 	TIM4_CR1 = 0;
 	TIM4_PSC = WAIT_PSC;
-	TIM4_ARR = HALF_PERIOD;
+	TIM4_ARR = DELAY_1000;
 	TIM4_EGR = TIM_UG;
 	TIM4_SR = 0;
 	TIM4_CR1 = TIM_ARPE;
@@ -52,14 +56,10 @@ int main() {
 	RCC_AHB1ENR |= RCC_GPIODEN;
 	RCC_APB1ENR |= RCC_TIM4EN;
 
-	
-
 	// GPIO init
 	init();
 	init_TIM4();
 
-	//TIM4_ARR = 1000;
-	//TIM4_SR = 0;
 	TIM4_CR1 = TIM4_CR1 | TIM_CEN;
 
 	while(1){
@@ -67,31 +67,39 @@ int main() {
 			if((GPIOD_ODR & (1<<GREEN_LED))==0){
 				GPIOD_BSRR == 1 << GREEN_LED;
 			}
-			else if((GPIOD_ODR & (1<<GREEN_LED))==0){
+			else{
 				GPIOD_BSRR == 1 << (16+GREEN_LED);
 			}
+			TIM4_SR = 0;
 		}
+
 		if((GPIOD_IDR & (1<<B1)) !=0){
 			pushed_B1=1;
+			last_B1=TIM4_CNT;
 		}
 		else if(pushed_B1){
-			switch(state){
-
-			case MILLE:
-				TIM4_ARR = 500;
-				state=CINQ;
-				break;
-			
-			case CINQ:
-				TIM4_ARR = 250;
-				state=DEUX;
-				break;
-			
-			case DEUX:
-				TIM4_ARR = 1000;
-				state=MILLE;
-				break;
-			pushed_B1=0;
+			int now = TIM4_CNT;
+			if(now <= last_B1){
+				now+= DELAY_20;
+			}
+			if(now-last_B1 >= DELAY_20){			
+				pushed_B1=0;
+				switch(state){
+				case MILLE:
+					TIM4_ARR = DELAY_500;
+					state=CINQ;
+					break;
+				
+				case CINQ:
+					TIM4_ARR = DELAY_250;
+					state=DEUX;
+					break;
+				
+				case DEUX:
+					TIM4_ARR = DELAY_1000;
+					state=MILLE;
+					break;
+				}
 			}
 		}
 
