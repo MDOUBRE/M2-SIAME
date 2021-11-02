@@ -165,6 +165,28 @@ ENTITY ALU IS
 	);
 END ENTITY ALU;
 
+architecture alu of ALU is
+
+
+begin
+
+P_Res: process(clk)
+begin
+  if(falling_edge(CLK)) then
+    if(sel = "0000") then
+      Res <= A and B;
+    elsif(sel = "0001") then
+      Res <= A or B;
+    elsif(sel = "0100") then
+      Res <= A nor B;
+    elsif(sel = "0101") then
+      Res <= A xor B;    
+    end if;
+  end if;            
+end process P_Res;
+
+end alu;
+
 ---------------------------------------------------
 
 -- Extension logic for immediate inputs
