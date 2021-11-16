@@ -204,3 +204,90 @@ end process P_ADD_TEST;
 
 end arch_test_BarrelShifter;
 
+
+
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.NUMERIC_STD.ALL;
+
+entity test_ALU is
+end test_ALU;
+
+architecture arch_test_alu of test_ALU is
+
+constant clkpulse : Time := 10 ns; -- 1/2 periode horloge
+
+signal E_A : std_logic_vector(31 downto 0); 
+signal E_B : std_logic_vector(31 downto 0); 
+signal E_sel : std_logic_vector(3 downto 0); 
+signal E_Enable_V : std_logic;
+signal E_ValDec : std_logic_vector(4 DOWNTO 0);
+signal E_Slt : std_logic;
+signal E_CLK : std_logic;
+signal E_Res : std_logic_vector(31 DOWNTO 0);
+signal E_N : std_logic;
+signal E_Z : std_logic;
+signal E_C : std_logic;
+signal E_V : std_logic;
+
+begin 
+
+regf0 : entity work.ALU
+    port map (A => E_A,
+                B => E_B, 
+                sel => E_sel, 
+                Enable_V => E_Enable_V, 
+                ValDec => E_ValDec,
+                Slt => E_Slt, 
+                CLK => E_CLK,
+                Res => E_Res, 
+                N => E_N, 
+                Z => E_Z,
+                C => E_C, 
+                V => E_V);    
+
+P_ALU_TEST: process
+begin
+    E_CLK <= '1';
+    E_A <= (0 => '1', 1 => '1', 3 => '1', others => '0');
+    E_B <= (1 => '1', 3 => '1', 4 => '1', 5 => '1', others => '0');
+    E_sel <= "0000";
+    wait for clkpulse;
+
+    E_CLK <= '0';
+    wait for clkpulse;
+
+    E_CLK <= '1';
+    E_A <= (0 => '1', 1 => '1', 3 => '1', others => '0');
+    E_B <= (1 => '1', 3 => '1', 4 => '1', 5 => '1', others => '0');
+    E_sel <= "0001";
+    wait for clkpulse;
+
+    E_CLK <= '0';
+    wait for clkpulse;
+
+    E_CLK <= '1';
+    E_A <= (0 => '1', 1 => '1', 3 => '1', others => '0');
+    E_B <= (1 => '1', 3 => '1', 4 => '1', 5 => '1', others => '0');
+    E_sel <= "0100";
+    wait for clkpulse;
+
+    E_CLK <= '0';
+    wait for clkpulse;
+
+    E_CLK <= '1';
+    E_A <= (0 => '1', 1 => '1', 3 => '1', others => '0');
+    E_B <= (1 => '1', 3 => '1', 4 => '1', 5 => '1', others => '0');
+    E_sel <= "0101";
+    wait for clkpulse;
+
+    E_CLK <= '0';
+    wait for clkpulse;
+
+    E_CLK <= '1';
+    wait for clkpulse;
+
+    wait;
+
+end process P_ALU_TEST;
+end arch_test_alu;
