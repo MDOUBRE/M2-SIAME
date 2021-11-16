@@ -1,0 +1,88 @@
+first name: Maxime  
+surname:    DOUBRE
+speciality: SIAME
+
+=== Section 2 ===
+Q3
+	loop bounds
+	crc.c:104:  42
+	crc.c:93:   256  
+	crc.c:73:   8
+Q4
+	WCET:       152898
+Q6:
+	address of (A): 17
+	execution count of (A): 257
+	address of (B): 18
+	execution count of (B): 256
+	why: Car on teste la boucle 10 fois quand elle est validée et une fois de plus ou le test n'est pas validé et ou on ne rentre pas dedans
+Q7
+	why: la fonction est appelée deux fois mais avec des paramètres différents donc on obtient deux cfg différents
+Q10
+	bound(s): 2048
+Q11
+	WCET:   78804
+	explanation: l'execution a été optimisée par orange
+
+=== Section 3 ===
+Q3
+	loop bounds
+	bubble.c:12:  7
+	bubble.c:15:  7
+Q4
+	WCET: 3425
+Q6
+	execution count: 64
+Q7
+	total execution count: 128
+Q8
+	observation:    On a une valeur divisée par deux avec le CFG comparé à celle avec la source
+	explanation:    
+Q10
+	WCET:
+
+=== Section 4 ===
+Q2
+	WCET:
+Q3:
+	loop bound:
+Q4:
+	WCET:
+Q5:
+	WCET:
+Q6:
+	total execution time:
+Q7:
+	16MHz: [ ] yes [ ] no
+	smallest frequency:
+
+=== Section 5 ===
+Q1:
+	period:
+Q2:
+	WCET doGyroChannel:
+	WCET doAROMXChannel:
+	WCET doAROMYChannel:
+	WCET doAROMZChannel:
+	observation:
+Q3:
+	approximated WCET:
+Q4:
+	approximated total WCET:
+	difference:
+Q5:
+	WCET:
+Q6:
+	new smallest frequency:
+
+=== Section 6 ===
+
+Q3
+	BB address calling the function pointer:
+	SWI instruction address:
+Q4:
+	called functions:
+	removed line: [ ] multicall [ ] noreturn
+Q6:
+	WCET:
+
