@@ -2,10 +2,10 @@
 <cfg-collection>
   <cfg id="_0" address="0x0000053c" label="main" number="0">
     <property identifier="otawa::CONTEXT">[]</property>
-    <property identifier="">000055820b121f20</property>
+    <property identifier="">000055ce61987f20</property>
     <entry id="_0-0"/>
     <bb id="_0-1" number="1" address="0x0000053c" size="28">
-      <property identifier="otawa::ipet::VAR">_000055820b149a90</property>
+      <property identifier="otawa::ipet::VAR">_000055ce619afa50</property>
       <property identifier="otawa::WEIGHT">1</property>
       <property identifier="otawa::bb_mblocks">&lt;not printable&gt;</property>
       <property identifier="otawa::REVERSE_DOM">{0, 1}</property>
@@ -13,7 +13,7 @@
       <line file="bubble.c" line="32"/>
     </bb>
     <bb id="_0-2" number="2" address="0x00000558" size="20">
-      <property identifier="otawa::ipet::VAR">_000055820b14b330</property>
+      <property identifier="otawa::ipet::VAR">_000055ce619b12f0</property>
       <property identifier="otawa::WEIGHT">1</property>
       <property identifier="otawa::bb_mblocks">&lt;not printable&gt;</property>
       <property identifier="otawa::REVERSE_DOM">{0, 1, 2, 3}</property>
@@ -21,13 +21,13 @@
       <line file="bubble.c" line="34"/>
     </bb>
     <bb id="_0-3" number="3" call="_1">
-      <property identifier="otawa::ipet::VAR">_000055820b14abe0</property>
+      <property identifier="otawa::ipet::VAR">_000055ce619b0ba0</property>
       <property identifier="otawa::WEIGHT">1</property>
       <property identifier="otawa::REVERSE_DOM">{0, 1, 3}</property>
     </bb>
     <exit id="_0-4"/>
     <edge source="_0-0" target="_0-1">
-      <property identifier="otawa::ipet::VAR">_000055820b14af10</property>
+      <property identifier="otawa::ipet::VAR">_000055ce619b0ed0</property>
       <property identifier="otawa::etime::LTS_TIME">12</property>
       <property identifier="otawa::WEIGHT">1</property>
       <property identifier="otawa::etime::EVENT">00000550 MAM event (MAM event: ALWAYS-MISS_WEAK from 00000540 for 00000550)</property>
@@ -36,18 +36,18 @@
       <property identifier="">&lt;null&gt;</property>
     </edge>
     <edge source="_0-1" target="_0-3">
-      <property identifier="otawa::ipet::VAR">_000055820b14ae80</property>
+      <property identifier="otawa::ipet::VAR">_000055ce619b0e40</property>
       <property identifier="otawa::etime::LTS_TIME">12</property>
       <property identifier="otawa::WEIGHT">1</property>
       <property identifier="">&lt;null&gt;</property>
     </edge>
     <edge source="_0-2" target="_0-4">
-      <property identifier="otawa::ipet::VAR">_000055820b14ab80</property>
+      <property identifier="otawa::ipet::VAR">_000055ce619b0b40</property>
       <property identifier="otawa::WEIGHT">1</property>
       <property identifier="">&lt;null&gt;</property>
     </edge>
     <edge source="_0-3" target="_0-2">
-      <property identifier="otawa::ipet::VAR">_000055820b14a670</property>
+      <property identifier="otawa::ipet::VAR">_000055ce619b0630</property>
       <property identifier="otawa::WEIGHT">1</property>
       <property identifier="otawa::etime::EVENT">00000560 MAM event (MAM event: ALWAYS_MISS_NC for 00000560)</property>
       <property identifier="otawa::etime::EVENT">00000558 MAM event (MAM event: ALWAYS_MISS_STRONG for 00000558)</property>
@@ -56,10 +56,10 @@
   </cfg>
   <cfg id="_1" address="0x00000410" label="bubbleSort" number="1">
     <property identifier="otawa::CONTEXT">[FUN(0000053c), CALL(00000554)]</property>
-    <property identifier="">000055820b121f80</property>
+    <property identifier="">000055ce61987f80</property>
     <entry id="_1-0"/>
     <bb id="_1-1" number="1" address="0x00000410" size="36">
-      <property identifier="otawa::ipet::VAR">_000055820b14a7f0</property>
+      <property identifier="otawa::ipet::VAR">_000055ce619b07b0</property>
       <property identifier="otawa::REVERSE_DOM">{0, 1}</property>
       <property identifier="otawa::WEIGHT">1</property>
       <property identifier="otawa::bb_mblocks">&lt;not printable&gt;</property>
@@ -67,20 +67,21 @@
       <line file="bubble.c" line="12"/>
     </bb>
     <bb id="_1-2" number="2" address="0x00000518" size="12">
-      <property identifier="otawa::ipet::VAR">_000055820b14a8b0</property>
+      <property identifier="otawa::ipet::VAR">_000055ce619b0870</property>
       <property identifier="otawa::WEIGHT">7</property>
       <property identifier="otawa::LOOP_HEADER">true</property>
       <property identifier="otawa::REVERSE_DOM">{0, 1, 2}</property>
+      <property identifier="otawa::TOTAL_ITERATION">7</property>
       <property identifier="otawa::MAX_ITERATION">7</property>
-      <property identifier="">000055820b121fe0</property>
+      <property identifier="">000055ce61987fe0</property>
       <property identifier="otawa::bb_mblocks">&lt;not printable&gt;</property>
       <property identifier="otawa::util::fixed">true</property>
-      <property identifier="otawa::EXIT_LIST">000055820b139620</property>
+      <property identifier="otawa::EXIT_LIST">000055ce6199f610</property>
       <property identifier="otawa::util::first_iter">true</property>
       <line file="bubble.c" line="12"/>
     </bb>
     <bb id="_1-3" number="3" address="0x00000434" size="20">
-      <property identifier="otawa::ipet::VAR">_000055820b14a9d0</property>
+      <property identifier="otawa::ipet::VAR">_000055ce619b0990</property>
       <property identifier="otawa::REVERSE_DOM">{0, 1, 2, 3}</property>
       <property identifier="otawa::WEIGHT">7</property>
       <property identifier="otawa::ENCLOSING_LOOP_HEADER">BB 2 (00000518)</property>
@@ -89,38 +90,39 @@
       <line file="bubble.c" line="15"/>
     </bb>
     <bb id="_1-4" number="4" address="0x000004f0" size="16">
-      <property identifier="otawa::ipet::VAR">_000055820b14aa90</property>
-      <property identifier="otawa::WEIGHT">49</property>
+      <property identifier="otawa::ipet::VAR">_000055ce619b0a50</property>
+      <property identifier="otawa::WEIGHT">28</property>
       <property identifier="otawa::LOOP_HEADER">true</property>
       <property identifier="otawa::REVERSE_DOM">{0, 1, 2, 3, 4}</property>
+      <property identifier="otawa::TOTAL_ITERATION">28</property>
       <property identifier="otawa::MAX_ITERATION">7</property>
       <property identifier="otawa::ENCLOSING_LOOP_HEADER">BB 2 (00000518)</property>
-      <property identifier="">000055820b122060</property>
+      <property identifier="">000055ce61988060</property>
       <property identifier="otawa::bb_mblocks">&lt;not printable&gt;</property>
       <property identifier="otawa::util::fixed">true</property>
-      <property identifier="otawa::EXIT_LIST">000055820b13e2d0</property>
+      <property identifier="otawa::EXIT_LIST">000055ce619a42f0</property>
       <property identifier="otawa::util::first_iter">true</property>
       <line file="bubble.c" line="15"/>
     </bb>
     <bb id="_1-5" number="5" address="0x00000448" size="52">
-      <property identifier="otawa::ipet::VAR">_000055820b1216c0</property>
-      <property identifier="otawa::WEIGHT">49</property>
+      <property identifier="otawa::ipet::VAR">_000055ce619876c0</property>
+      <property identifier="otawa::WEIGHT">28</property>
       <property identifier="otawa::ENCLOSING_LOOP_HEADER">BB 4 (000004f0)</property>
       <property identifier="otawa::bb_mblocks">&lt;not printable&gt;</property>
       <property identifier="otawa::REVERSE_DOM">{0, 1, 2, 3, 4, 5}</property>
       <line file="bubble.c" line="17"/>
     </bb>
     <bb id="_1-6" number="6" address="0x000004e4" size="12">
-      <property identifier="otawa::ipet::VAR">_000055820b1217e0</property>
+      <property identifier="otawa::ipet::VAR">_000055ce619877e0</property>
       <property identifier="otawa::REVERSE_DOM">{0, 1, 2, 3, 4, 5, 6}</property>
-      <property identifier="otawa::WEIGHT">49</property>
+      <property identifier="otawa::WEIGHT">28</property>
       <property identifier="otawa::ENCLOSING_LOOP_HEADER">BB 4 (000004f0)</property>
       <property identifier="otawa::bb_mblocks">&lt;not printable&gt;</property>
       <line file="bubble.c" line="15"/>
     </bb>
     <bb id="_1-7" number="7" address="0x0000047c" size="104">
-      <property identifier="otawa::ipet::VAR">_000055820b1218a0</property>
-      <property identifier="otawa::WEIGHT">49</property>
+      <property identifier="otawa::ipet::VAR">_000055ce619878a0</property>
+      <property identifier="otawa::WEIGHT">28</property>
       <property identifier="otawa::ENCLOSING_LOOP_HEADER">BB 4 (000004f0)</property>
       <property identifier="otawa::bb_mblocks">&lt;not printable&gt;</property>
       <property identifier="otawa::REVERSE_DOM">{0, 1, 2, 3, 4, 5, 7}</property>
@@ -130,7 +132,7 @@
       <line file="bubble.c" line="22"/>
     </bb>
     <bb id="_1-8" number="8" address="0x00000500" size="12">
-      <property identifier="otawa::ipet::VAR">_000055820b121960</property>
+      <property identifier="otawa::ipet::VAR">_000055ce61987960</property>
       <property identifier="otawa::WEIGHT">7</property>
       <property identifier="otawa::ENCLOSING_LOOP_HEADER">BB 2 (00000518)</property>
       <property identifier="otawa::bb_mblocks">&lt;not printable&gt;</property>
@@ -138,14 +140,14 @@
       <line file="bubble.c" line="25"/>
     </bb>
     <bb id="_1-9" number="9" address="0x00000528" size="4">
-      <property identifier="otawa::ipet::VAR">_000055820b121a80</property>
+      <property identifier="otawa::ipet::VAR">_000055ce61987a80</property>
       <property identifier="otawa::WEIGHT">1</property>
       <property identifier="otawa::bb_mblocks">&lt;not printable&gt;</property>
       <property identifier="otawa::REVERSE_DOM">{0, 1, 2, 3, 4, 8, 9}</property>
       <line file="bubble.c" line="25"/>
     </bb>
     <bb id="_1-10" number="10" address="0x0000050c" size="12">
-      <property identifier="otawa::ipet::VAR">_000055820b121b40</property>
+      <property identifier="otawa::ipet::VAR">_000055ce61987b40</property>
       <property identifier="otawa::REVERSE_DOM">{0, 1, 2, 3, 4, 8, 10}</property>
       <property identifier="otawa::WEIGHT">7</property>
       <property identifier="otawa::ENCLOSING_LOOP_HEADER">BB 2 (00000518)</property>
@@ -153,14 +155,14 @@
       <line file="bubble.c" line="12"/>
     </bb>
     <bb id="_1-11" number="11" address="0x00000524" size="4">
-      <property identifier="otawa::ipet::VAR">_000055820b121c00</property>
+      <property identifier="otawa::ipet::VAR">_000055ce61987c00</property>
       <property identifier="otawa::WEIGHT">1</property>
       <property identifier="otawa::bb_mblocks">&lt;not printable&gt;</property>
       <property identifier="otawa::REVERSE_DOM">{0, 1, 2, 11}</property>
       <line file="bubble.c" line="28"/>
     </bb>
     <bb id="_1-12" number="12" address="0x0000052c" size="16">
-      <property identifier="otawa::ipet::VAR">_000055820b121cc0</property>
+      <property identifier="otawa::ipet::VAR">_000055ce61987cc0</property>
       <property identifier="otawa::WEIGHT">1</property>
       <property identifier="otawa::bb_mblocks">&lt;not printable&gt;</property>
       <property identifier="otawa::REVERSE_DOM">{0, 1, 2, 12}</property>
@@ -168,7 +170,7 @@
     </bb>
     <exit id="_1-13"/>
     <edge source="_1-0" target="_1-1">
-      <property identifier="otawa::ipet::VAR">_000055820b14a790</property>
+      <property identifier="otawa::ipet::VAR">_000055ce619b0750</property>
       <property identifier="otawa::WEIGHT">1</property>
       <property identifier="otawa::etime::EVENT">00000430 MAM event (MAM event: ALWAYS-MISS_WEAK from 00000420 for 00000430)</property>
       <property identifier="otawa::etime::EVENT">00000420 MAM event (MAM event: ALWAYS-MISS_WEAK from 00000410 for 00000420)</property>
@@ -176,9 +178,9 @@
       <property identifier="">&lt;null&gt;</property>
     </edge>
     <edge source="_1-1" target="_1-2">
-      <property identifier="otawa::ipet::VAR">_000055820b14a850</property>
+      <property identifier="otawa::ipet::VAR">_000055ce619b0810</property>
       <property identifier="otawa::etime::LTS_TIME">5</property>
-      <property identifier="otawa::etime::HTS_CONFIG">1 _000055820b157a10</property>
+      <property identifier="otawa::etime::HTS_CONFIG">1 _000055ce619bdac0</property>
       <property identifier="otawa::WEIGHT">1</property>
       <property identifier="otawa::etime::EVENT">00000520 MAM event (MAM event: ALWAYS_MISS_NC for 00000520)</property>
       <property identifier="otawa::etime::EVENT">00000518 MAM event (MAM event: NOT_CLASSIFIED for 00000518)</property>
@@ -188,9 +190,9 @@
       <property identifier="">&lt;null&gt;</property>
     </edge>
     <edge source="_1-2" target="_1-3">
-      <property identifier="otawa::ipet::VAR">_000055820b14a910</property>
+      <property identifier="otawa::ipet::VAR">_000055ce619b08d0</property>
       <property identifier="otawa::etime::LTS_TIME">6</property>
-      <property identifier="otawa::etime::HTS_CONFIG">3 _000055820b157c80</property>
+      <property identifier="otawa::etime::HTS_CONFIG">3 _000055ce619bfe40</property>
       <property identifier="otawa::WEIGHT">7</property>
       <property identifier="otawa::etime::EVENT">00000440 MAM event (MAM event: ALWAYS_MISS_NC for 00000440)</property>
       <property identifier="otawa::etime::EVENT">00000434 MAM event (MAM event: NOT_CLASSIFIED for 00000434)</property>
@@ -199,7 +201,7 @@
       <property identifier="">&lt;null&gt;</property>
     </edge>
     <edge source="_1-2" target="_1-11">
-      <property identifier="otawa::ipet::VAR">_000055820b14a970</property>
+      <property identifier="otawa::ipet::VAR">_000055ce619b0930</property>
       <property identifier="otawa::etime::LTS_TIME">1</property>
       <property identifier="otawa::WEIGHT">1</property>
       <property identifier="otawa::etime::EVENT">00000524 MAM event (MAM event: ALWAYS_HIT for 00000524)</property>
@@ -209,9 +211,9 @@
       <property identifier="otawa::LOOP_EXIT_EDGE">BB 2 (00000518)</property>
     </edge>
     <edge source="_1-3" target="_1-4">
-      <property identifier="otawa::ipet::VAR">_000055820b14aa30</property>
+      <property identifier="otawa::ipet::VAR">_000055ce619b09f0</property>
       <property identifier="otawa::etime::LTS_TIME">8</property>
-      <property identifier="otawa::etime::HTS_CONFIG">1 _000055820b157c10</property>
+      <property identifier="otawa::etime::HTS_CONFIG">1 _000055ce619c78c0</property>
       <property identifier="otawa::WEIGHT">7</property>
       <property identifier="otawa::etime::EVENT">000004f0 MAM event (MAM event: NOT_CLASSIFIED for 000004f0)</property>
       <property identifier="otawa::etime::PREFIX_EVENT">00000440 MAM event (MAM event: ALWAYS_MISS_NC for 00000440)</property>
@@ -219,10 +221,10 @@
       <property identifier="">&lt;null&gt;</property>
     </edge>
     <edge source="_1-4" target="_1-5">
-      <property identifier="otawa::ipet::VAR">_000055820b14aaf0</property>
+      <property identifier="otawa::ipet::VAR">_000055ce619b0ab0</property>
       <property identifier="otawa::etime::LTS_TIME">15</property>
-      <property identifier="otawa::etime::HTS_CONFIG">2 _000055820b163b10</property>
-      <property identifier="otawa::WEIGHT">49</property>
+      <property identifier="otawa::etime::HTS_CONFIG">2 _000055ce619c9ac0</property>
+      <property identifier="otawa::WEIGHT">28</property>
       <property identifier="otawa::etime::EVENT">00000470 MAM event (MAM event: ALWAYS-MISS_WEAK from 00000460 for 00000470)</property>
       <property identifier="otawa::etime::EVENT">00000460 MAM event (MAM event: ALWAYS-MISS_WEAK from 00000450 for 00000460)</property>
       <property identifier="otawa::etime::EVENT">00000450 MAM event (MAM event: ALWAYS_MISS_NC for 00000450)</property>
@@ -231,7 +233,7 @@
       <property identifier="">&lt;null&gt;</property>
     </edge>
     <edge source="_1-4" target="_1-8">
-      <property identifier="otawa::ipet::VAR">_000055820b121660</property>
+      <property identifier="otawa::ipet::VAR">_000055ce61987660</property>
       <property identifier="otawa::etime::LTS_TIME">5</property>
       <property identifier="otawa::WEIGHT">7</property>
       <property identifier="otawa::etime::EVENT">00000500 MAM event (MAM event: ALWAYS-MISS_WEAK from 000004f0 for 00000500)</property>
@@ -240,10 +242,10 @@
       <property identifier="otawa::LOOP_EXIT_EDGE">BB 4 (000004f0)</property>
     </edge>
     <edge source="_1-5" target="_1-6">
-      <property identifier="otawa::ipet::VAR">_000055820b121720</property>
+      <property identifier="otawa::ipet::VAR">_000055ce61987720</property>
       <property identifier="otawa::etime::LTS_TIME">5</property>
-      <property identifier="otawa::etime::HTS_CONFIG">1 _000055820b15b0f0</property>
-      <property identifier="otawa::WEIGHT">49</property>
+      <property identifier="otawa::etime::HTS_CONFIG">1 _000055ce619d2a30</property>
+      <property identifier="otawa::WEIGHT">28</property>
       <property identifier="otawa::etime::EVENT">000004e4 MAM event (MAM event: NOT_CLASSIFIED for 000004e4)</property>
       <property identifier="otawa::etime::PREFIX_EVENT">00000470 MAM event (MAM event: ALWAYS-MISS_WEAK from 00000460 for 00000470)</property>
       <property identifier="otawa::etime::PREFIX_EVENT">00000460 MAM event (MAM event: ALWAYS-MISS_WEAK from 00000450 for 00000460)</property>
@@ -252,9 +254,9 @@
       <property identifier="">&lt;null&gt;</property>
     </edge>
     <edge source="_1-5" target="_1-7">
-      <property identifier="otawa::ipet::VAR">_000055820b121780</property>
+      <property identifier="otawa::ipet::VAR">_000055ce61987780</property>
       <property identifier="otawa::etime::LTS_TIME">28</property>
-      <property identifier="otawa::WEIGHT">49</property>
+      <property identifier="otawa::WEIGHT">28</property>
       <property identifier="otawa::etime::EVENT">000004e0 MAM event (MAM event: NOT_CLASSIFIED for 000004e0)</property>
       <property identifier="otawa::etime::EVENT">000004d0 MAM event (MAM event: ALWAYS-MISS_WEAK from 000004c0 for 000004d0)</property>
       <property identifier="otawa::etime::EVENT">000004c0 MAM event (MAM event: ALWAYS-MISS_WEAK from 000004b0 for 000004c0)</property>
@@ -270,20 +272,20 @@
       <property identifier="">&lt;null&gt;</property>
     </edge>
     <edge source="_1-6" target="_1-4">
-      <property identifier="otawa::ipet::VAR">_000055820b121840</property>
+      <property identifier="otawa::ipet::VAR">_000055ce61987840</property>
       <property identifier="otawa::etime::LTS_TIME">5</property>
       <property identifier="otawa::BACK_EDGE">true</property>
-      <property identifier="otawa::etime::HTS_CONFIG">1 _000055820b163980</property>
-      <property identifier="otawa::WEIGHT">49</property>
+      <property identifier="otawa::etime::HTS_CONFIG">1 _000055ce619c98b0</property>
+      <property identifier="otawa::WEIGHT">28</property>
       <property identifier="otawa::etime::EVENT">000004f0 MAM event (MAM event: NOT_CLASSIFIED for 000004f0)</property>
       <property identifier="otawa::etime::PREFIX_EVENT">000004e4 MAM event (MAM event: NOT_CLASSIFIED for 000004e4)</property>
       <property identifier="">&lt;null&gt;</property>
     </edge>
     <edge source="_1-7" target="_1-6">
-      <property identifier="otawa::ipet::VAR">_000055820b121900</property>
+      <property identifier="otawa::ipet::VAR">_000055ce61987900</property>
       <property identifier="otawa::etime::LTS_TIME">4</property>
-      <property identifier="otawa::etime::HTS_CONFIG">1 _000055820b16e670</property>
-      <property identifier="otawa::WEIGHT">49</property>
+      <property identifier="otawa::etime::HTS_CONFIG">1 _000055ce619d4600</property>
+      <property identifier="otawa::WEIGHT">28</property>
       <property identifier="otawa::etime::EVENT">000004e4 MAM event (MAM event: NOT_CLASSIFIED for 000004e4)</property>
       <property identifier="otawa::etime::PREFIX_EVENT">000004e0 MAM event (MAM event: NOT_CLASSIFIED for 000004e0)</property>
       <property identifier="otawa::etime::PREFIX_EVENT">000004d0 MAM event (MAM event: ALWAYS-MISS_WEAK from 000004c0 for 000004d0)</property>
@@ -296,7 +298,7 @@
       <property identifier="">&lt;null&gt;</property>
     </edge>
     <edge source="_1-8" target="_1-9">
-      <property identifier="otawa::ipet::VAR">_000055820b1219c0</property>
+      <property identifier="otawa::ipet::VAR">_000055ce619879c0</property>
       <property identifier="otawa::etime::LTS_TIME">2</property>
       <property identifier="otawa::WEIGHT">1</property>
       <property identifier="otawa::etime::EVENT">00000528 MAM event (MAM event: ALWAYS_MISS_STRONG for 00000528)</property>
@@ -305,7 +307,7 @@
       <property identifier="otawa::LOOP_EXIT_EDGE">BB 2 (00000518)</property>
     </edge>
     <edge source="_1-8" target="_1-10">
-      <property identifier="otawa::ipet::VAR">_000055820b121a20</property>
+      <property identifier="otawa::ipet::VAR">_000055ce61987a20</property>
       <property identifier="otawa::etime::LTS_TIME">3</property>
       <property identifier="otawa::WEIGHT">7</property>
       <property identifier="otawa::etime::EVENT">00000510 MAM event (MAM event: ALWAYS-MISS_WEAK from 00000500 for 00000510)</property>
@@ -314,9 +316,9 @@
       <property identifier="">&lt;null&gt;</property>
     </edge>
     <edge source="_1-9" target="_1-12">
-      <property identifier="otawa::ipet::VAR">_000055820b121ae0</property>
+      <property identifier="otawa::ipet::VAR">_000055ce61987ae0</property>
       <property identifier="otawa::etime::LTS_TIME">6</property>
-      <property identifier="otawa::etime::HTS_CONFIG">2 _000055820b142560</property>
+      <property identifier="otawa::etime::HTS_CONFIG">2 _000055ce619d52b0</property>
       <property identifier="otawa::WEIGHT">1</property>
       <property identifier="otawa::etime::EVENT">00000530 MAM event (MAM event: ALWAYS_MISS_NC for 00000530)</property>
       <property identifier="otawa::etime::EVENT">0000052c MAM event (MAM event: NOT_CLASSIFIED for 0000052c)</property>
@@ -324,7 +326,7 @@
       <property identifier="">&lt;null&gt;</property>
     </edge>
     <edge source="_1-10" target="_1-2">
-      <property identifier="otawa::ipet::VAR">_000055820b121ba0</property>
+      <property identifier="otawa::ipet::VAR">_000055ce61987ba0</property>
       <property identifier="otawa::etime::LTS_TIME">5</property>
       <property identifier="otawa::BACK_EDGE">true</property>
       <property identifier="otawa::WEIGHT">7</property>
@@ -335,9 +337,9 @@
       <property identifier="">&lt;null&gt;</property>
     </edge>
     <edge source="_1-11" target="_1-12">
-      <property identifier="otawa::ipet::VAR">_000055820b121c60</property>
+      <property identifier="otawa::ipet::VAR">_000055ce61987c60</property>
       <property identifier="otawa::etime::LTS_TIME">8</property>
-      <property identifier="otawa::etime::HTS_CONFIG">2 _000055820b16fa80</property>
+      <property identifier="otawa::etime::HTS_CONFIG">2 _000055ce619d5950</property>
       <property identifier="otawa::WEIGHT">1</property>
       <property identifier="otawa::etime::EVENT">00000530 MAM event (MAM event: ALWAYS_MISS_NC for 00000530)</property>
       <property identifier="otawa::etime::EVENT">0000052c MAM event (MAM event: NOT_CLASSIFIED for 0000052c)</property>
@@ -345,7 +347,7 @@
       <property identifier="">&lt;null&gt;</property>
     </edge>
     <edge source="_1-12" target="_1-13">
-      <property identifier="otawa::ipet::VAR">_000055820b121d20</property>
+      <property identifier="otawa::ipet::VAR">_000055ce61987d20</property>
       <property identifier="otawa::etime::LTS_TIME">9</property>
       <property identifier="otawa::WEIGHT">1</property>
       <property identifier="">&lt;null&gt;</property>

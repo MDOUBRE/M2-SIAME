@@ -1,0 +1,24 @@
+checksum "helico.elf" 0x87c038e6;
+
+// Function main (helico.c:538)
+loop "main" + 0x1c 50 ; // 0x139c (helico.c:553)
+	loop "main" + 0x98 4 ; // 0x1418 (helico.c:559)
+
+// Function calibrateGyro (helico.c:482)
+loop "calibrateGyro" + 0x44 32 ; // 0x10a4 (helico.c:484)
+
+// Function calibrateArom (helico.c:490)
+loop "calibrateArom" + 0x48 128 ; // 0x112c (helico.c:491)
+loop "calibrateArom" + 0xb4 128 ; // 0x1198 (helico.c:496)
+loop "calibrateArom" + 0x120 128 ; // 0x1204 (helico.c:501)
+
+// Function action (helico.c:244)
+loop "action" + 0x54 8 ; // 0x6f8 (helico.c:257)
+
+// Function FixFilter (helico.c:183)
+loop "FixFilter" + 0x78 128 ; // 0x5c0 (helico.c:186)
+
+// Function recordSample (helico.c:197)
+loop "recordSample" + 0x68 127 ; // 0x668 (helico.c:200)
+
+

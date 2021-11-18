@@ -1,0 +1,9 @@
+checksum "helico.elf" 0x87c038e6;
+
+// Function recordSample (helico.c:197)
+loop "recordSample" + 0x68 128 ; // 0x668 (helico.c:200)
+
+// Function FixFilter (helico.c:183)
+loop "FixFilter" + 0x78 128 ; // 0x5c0 (helico.c:186)
+
+

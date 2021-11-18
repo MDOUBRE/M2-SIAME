@@ -37,39 +37,39 @@ Q7
 	total execution count: 128
 Q8
 	observation:    On a une valeur divisée par deux avec le CFG comparé à celle avec la source
-	explanation:    
+	explanation:    Dans la source on compte le nombre de fois ou on a la ligne dans tout le programme alors que dans le CFG le compte n'est donnée qu'à partir du bloc 15
 Q10
-	WCET:
+	WCET: 1857 cycles
 
 === Section 4 ===
 Q2
-	WCET:
+	WCET: 156
 Q3:
-	loop bound:
+	loop bound: 8
 Q4:
-	WCET:
+	WCET: 314
 Q5:
-	WCET:
+	WCET: 1917
 Q6:
-	total execution time:
+	total execution time: 9598
 Q7:
-	16MHz: [ ] yes [ ] no
-	smallest frequency:
+	16MHz: [X] yes [ ] no
+	smallest frequency: 9.6MHz ==> 9600 cycles par ms
 
 === Section 5 ===
 Q1:
-	period:
+	period: 10ms
 Q2:
-	WCET doGyroChannel:
-	WCET doAROMXChannel:
-	WCET doAROMYChannel:
-	WCET doAROMZChannel:
-	observation:
+	WCET doGyroChannel: 1828
+	WCET doAROMXChannel: 177
+	WCET doAROMYChannel: 163
+	WCET doAROMZChannel: 162
+	observation: la fct doGyro appelle à chaque fois FixFilter comparé aux trois autres qui ne l'appelent que certaines fois
 Q3:
-	approximated WCET:
+	approximated WCET: 2526
 Q4:
-	approximated total WCET:
-	difference:
+	approximated total WCET: 4406
+	difference: 5192
 Q5:
 	WCET:
 Q6:
