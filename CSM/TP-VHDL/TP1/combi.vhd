@@ -150,40 +150,58 @@ USE IEEE.NUMERIC_STD.ALL;
 ENTITY ALU IS
 	PORT
 	(
-		A : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-		B : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-		sel : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
-		Enable_V : IN STD_LOGIC;
-		ValDec : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
-		Slt : IN STD_LOGIC;
-		CLK : IN STD_LOGIC;
-		Res : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-		N : OUT STD_LOGIC;
-		Z : OUT STD_LOGIC;
-		C : OUT STD_LOGIC;
-		V : OUT STD_LOGIC
+		A :         in std_logic_vector(31 DOWNTO 0);
+		B :         in std_logic_vector(31 DOWNTO 0);
+		sel :       in std_logic_vector(3 DOWNTO 0);
+		Enable_V :  in std_logic;
+		ValDec :    in std_logic_vector(4 DOWNTO 0);
+		Slt :       in std_logic;
+		CLK :       in std_logic;
+		Res :       out std_logic_vector(31 DOWNTO 0);
+		N :         out std_logic;
+		Z :         out std_logic;
+		C :         out std_logic;
+		V :         out std_logic
 	);
 END ENTITY ALU;
 
 architecture alu of ALU is
 
+  signal res0 : std_logic;
+  signal res_addCarry, SL, SR, Bxor, resnor : std_logic_vector(31 downto 0);
+  signal C30_addCarry, C31_addCarry : std_logic;
+  signal resN : std_logic; -- pour le signal N
 
 begin
 
-P_Res: process(clk)
+G : for i in 0 to 31 generate
+  Bxor(i)<=B(i) xor sel(3);
+end generate;
+
+instAdd : entity work.addCarry port map(A, Bxor, sel(3), res_addCarry, C30_addCarry, C31_addCarry);
+instBarrel : entity work.BarrelShifter port map(A, ValDec, SR, SL);
+
+res0 <= (not(Enable_V and (C31_addCarry xor sel(3))) or (Enable_V and (res_addCarry(31) xor (C31_addCarry xor C30_addCarry)));
+
+Res <= A and B WHEN sel(2 downto 0)="000" else
+       A or B WHEN sel(2 downto 0)="001" else
+       res_addCarry WHEN sel(2 downto 0)="010" else
+       (0 => res0, others => '0') when sel(2 downto 0)="011" else
+       A nor B WHEN sel(2 downto 0)="100" else
+       A xor B WHEN sel(2 downto 0)="101" else
+       SR WHEN sel(2 downto 0)="110" else
+       SL when sel(2 downto 0)="111";
+
+
+P_NZVC: process(clk)
 begin
   if(falling_edge(CLK)) then
-    if(sel = "0000") then
-      Res <= A and B;
-    elsif(sel = "0001") then
-      Res <= A or B;
-    elsif(sel = "0100") then
-      Res <= A nor B;
-    elsif(sel = "0101") then
-      Res <= A xor B;    
-    end if;
+    N <= res_addCarry(31);
+    Z <= '0' when Res="00000000000000000000000000000000" else '1';
+    V <= not(Slt) and (C31_addCarry xor C30_addCarry) and Enable_V;
+    C <= C31_addCarry xor sel(3);
   end if;            
-end process P_Res;
+end process P_NZVC;
 
 end alu;
 
