@@ -170,7 +170,7 @@ architecture alu of ALU is
   signal res0 : std_logic;
   signal res_addCarry, SL, SR, Bxor, resnor : std_logic_vector(31 downto 0);
   signal C30_addCarry, C31_addCarry : std_logic;
-  signal resN : std_logic; -- pour le signal N
+  signal resTmp : std_logic_vector(31 downto 0);
 
 begin
 
@@ -181,9 +181,18 @@ end generate;
 instAdd : entity work.addCarry port map(A, Bxor, sel(3), res_addCarry, C30_addCarry, C31_addCarry);
 instBarrel : entity work.BarrelShifter port map(A, ValDec, SR, SL);
 
-res0 <= (not(Enable_V and (C31_addCarry xor sel(3))) or (Enable_V and (res_addCarry(31) xor (C31_addCarry xor C30_addCarry)));
+res0 <= (not(Enable_V and (C31_addCarry xor sel(3))) or (Enable_V and (res_addCarry(31) xor (C31_addCarry xor C30_addCarry))));
 
 Res <= A and B WHEN sel(2 downto 0)="000" else
+       A or B WHEN sel(2 downto 0)="001" else
+       res_addCarry WHEN sel(2 downto 0)="010" else
+       (0 => res0, others => '0') when sel(2 downto 0)="011" else
+       A nor B WHEN sel(2 downto 0)="100" else
+       A xor B WHEN sel(2 downto 0)="101" else
+       SR WHEN sel(2 downto 0)="110" else
+       SL when sel(2 downto 0)="111";
+
+resTmp <= A and B WHEN sel(2 downto 0)="000" else
        A or B WHEN sel(2 downto 0)="001" else
        res_addCarry WHEN sel(2 downto 0)="010" else
        (0 => res0, others => '0') when sel(2 downto 0)="011" else
@@ -197,7 +206,11 @@ P_NZVC: process(clk)
 begin
   if(falling_edge(CLK)) then
     N <= res_addCarry(31);
-    Z <= '0' when Res="00000000000000000000000000000000" else '1';
+    if(resTmp="00000000000000000000000000000000") then
+      Z <= '0';
+    else 
+      Z <= '1';
+    end if;
     V <= not(Slt) and (C31_addCarry xor C30_addCarry) and Enable_V;
     C <= C31_addCarry xor sel(3);
   end if;            
@@ -220,3 +233,10 @@ entity extension is
     ExtOut : out std_logic_vector(31 downto 0)
     );
 end entity;
+
+architecture ext of extension is
+begin
+
+ExtOut <= x"ffff" & inst when (inst(15) and ExtOp) = '1' else x"0000" & inst;
+
+end ext;
