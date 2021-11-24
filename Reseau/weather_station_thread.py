@@ -59,12 +59,6 @@ class WeatherStation:
                 log.error('Enumerate Error: ' + str(e.description))
                 time.sleep(1)
 
-    def cb_illuminance(self, illuminance):
-        if self.lcd is not None:
-            text = 'Illuminanc %6.2f lx' % (illuminance/10.0)
-            self.lcd.write_line(0, 0, text)
-            log.info('Write to line 0: ' + text)
-
     def cb_illuminance_v2(self, illuminance):
         if self.lcd is not None:
             text = 'Illumina %8.2f lx' % (illuminance/100.0)
@@ -74,18 +68,6 @@ class WeatherStation:
             file=open("illum.txt", "w")
             file.write(str(result))
             file.close()
-
-    def cb_illuminance_v3(self, illuminance):
-        if self.lcd is not None:
-            text = 'Illumina %8.2f lx' % (illuminance/100.0)
-            self.lcd.write_line(0, 0, text)
-            log.info('Write to line 0: ' + text)
-
-    def cb_humidity(self, humidity):
-        if self.lcd is not None:
-            text = 'Humidity   %6.2f %%' % (humidity/10.0)
-            self.lcd.write_line(1, 0, text)
-            log.info('Write to line 1: ' + text)
 
     def cb_humidity_v2(self, humidity):
         if self.lcd is not None:
@@ -121,32 +103,6 @@ class WeatherStation:
             file=open("temperature.txt", "w")
             file.write(str(result))
             file.close()
-
-    def cb_air_pressure_v2(self, air_pressure):
-        if self.lcd is not None:
-            text = 'Air Press %7.2f mb' % (air_pressure/1000.0)
-            #result = air_pressure/1000.0
-            self.lcd.write_line(2, 0, text)
-            log.info('Write to line 2: ' + text)
-            #file=open("air_press.txt", "w")
-            #file.write(str(result))
-            #file.close()
-
-            try:
-                temperature = self.baro_v2.get_temperature()
-            except Error as e:
-                log.error('Could not get temperature: ' + str(e.description))
-                return
-
-            # \xDF == ° on LCD 20x4 charset
-            text = 'Temperature %5.2f \xDFC' % (temperature/100.0)
-            #result= temperature/100.0
-            self.lcd.write_line(3, 0, text)
-            log.info('Write to line 3: ' + text.replace('\xDF', '°'))
-            #file=open("temperature.txt", "w")
-            #file.write(str(result))
-            #file.close()
-
 
     def cb_enumerate(self, uid, connected_uid, position, hardware_version,
                      firmware_version, device_identifier, enumeration_type):
