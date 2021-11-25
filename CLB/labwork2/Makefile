@@ -3,8 +3,8 @@
 APP = main
 STLINK_ROOT=stlink-1.5.1/build/Release
 LOG = stm32f4.log
-#GDB = gdb-multiarch
-GDB = gdb
+GDB = gdb-multiarch
+#GDB = gdb
 GDB_FLAGS=-command ../scripts/gdbinit
 
 # rules
@@ -27,41 +27,12 @@ log:
 
 
 # exercises
-ex1:
-	cd src; $(MAKE) ex1.elf
+ex%:
+	cd src; $(MAKE) ex$*.elf
 
-ex2:
-	cd src; $(MAKE) ex2.elf
+debug_ex%: ex%
+	cd src; $(GDB) $(GDB_FLAGS) ex$*.elf
 
-ex3:
-	cd src; $(MAKE) ex3.elf
-
-ex4:
-	cd src; $(MAKE) ex4.elf
-
-ex5:
-	cd src; $(MAKE) ex5.elf
-
-ex6:
-	cd src; $(MAKE) ex6.elf
-
-debug_ex1: ex1
-	cd src; $(GDB) $(GDB_FLAGS) ex1.elf
-
-debug_ex2: ex2
-	cd src; $(GDB) $(GDB_FLAGS) ex2.elf
-
-debug_ex3: ex3
-	cd src; $(GDB) $(GDB_FLAGS) ex3.elf
-
-debug_ex4: ex4
-	cd src; $(GDB) $(GDB_FLAGS) ex4.elf
-
-debug_ex5: ex5
-	cd src; $(GDB) $(GDB_FLAGS) ex5.elf
-
-debug_ex6: ex6
-	cd src; $(GDB) $(GDB_FLAGS) ex6.elf
 
 
 # build distribution
@@ -69,13 +40,17 @@ DIST_FILES = \
 	COPYING.md \
 	.gdbinit \
 	include \
-	scripts
+	scripts \
+	Makefile
 DIST_SRC = \
 	src/Makefile \
 	src/startup.c \
 	src/tinyprintf.c \
-	src/ex?.c
-DIST_NAME=labwork1
+	src/ex8.c \
+	src/ex9.c \
+	src/ex10.c \
+	src/ex11.c
+DIST_NAME=labwork2
 
 dist:
 	if [ -e $(DIST_NAME) ]; then \
@@ -84,11 +59,13 @@ dist:
 	mkdir $(DIST_NAME)
 	cp -R $(DIST_FILES) $(DIST_NAME)
 	mkdir $(DIST_NAME)/src
-	cp scripts/Makefile.014 $(DIST_NAME)/Makefile
+	#cp scripts/Makefile.014 $(DIST_NAME)/Makefile
 	for f in $(DIST_SRC); do \
 		autofilter.py < $$f > $(DIST_NAME)/$$f; \
 	done
 	cd $(DIST_NAME); make; make clean
 	tar cvfz $(DIST_NAME).tgz $(DIST_NAME)
 
-
+DATE = $(shell date +"%y%m%d")
+assign:
+	tar cvfz assign-$(DATE).tgz src/*.c

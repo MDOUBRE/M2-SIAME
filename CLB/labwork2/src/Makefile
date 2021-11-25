@@ -3,14 +3,8 @@
 STLINK_ROOT=stlink-1.5.1/build/Release
 
 # sources
-PROGRAMS = \
-	ex1.elf \
-	ex2.elf \
-	ex3.elf \
-	ex4.elf \
-	ex5.elf \
-	ex6.elf
-
+SOURCES = $(wildcard ex*.c)
+PROGRAMS = $(SOURCES:.c=.elf)
 OBJECTS = $(SOURCES:.c=.o)
 
 # compiler configuration
@@ -40,22 +34,8 @@ $(APP).elf: $(OBJECTS)
 	$(CC) $(CFLAGS) $(OBJECTS) -o $@ $(LDFLAGS)
 
 clean:
-	rm -f *.o $(PROGRAMS)
+	rm -f *.o $(PROGRAMS) $(OBJECTS)
 
-ex1.elf: startup.o ex1.o tinyprintf.o
+ex%.elf: startup.o ex%.o tinyprintf.o
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
-ex2.elf: startup.o ex2.o tinyprintf.o
-	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
-
-ex3.elf: startup.o ex3.o tinyprintf.o
-	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
-
-ex4.elf: startup.o ex4.o tinyprintf.o
-	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
-
-ex5.elf: startup.o ex5.o tinyprintf.o
-	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
-
-ex6.elf: startup.o ex6.o tinyprintf.o
-	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)

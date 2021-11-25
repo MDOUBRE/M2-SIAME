@@ -1,37 +1,37 @@
 v 4
-file . "tests.vhd" "4610ac8b3a62eb7419d0686b2f2b2b208e6c3ecc" "20211124155323.012":
-  entity test_reg at 1( 0) + 0 on 1909;
-  architecture arch_test_reg of test_reg at 8( 104) + 0 on 1910;
-  entity test_banc_reg at 60( 1059) + 0 on 1911;
-  architecture arch_test_banc_reg of test_banc_reg at 67( 1173) + 0 on 1912;
-  entity test_mux at 120( 2572) + 0 on 1913;
-  architecture arch_test_mux of test_mux at 127( 2676) + 0 on 1914;
-  entity test_add at 184( 3926) + 0 on 1915;
-  architecture arch_test_add of test_add at 191( 4030) + 0 on 1916;
-  entity test_addcarry at 224( 4700) + 0 on 1917;
-  architecture arch_test_addcarry of test_addcarry at 231( 4814) + 0 on 1918;
-  entity test_barrelshifter at 270( 5649) + 0 on 1919;
-  architecture arch_test_barrelshifter of test_barrelshifter at 277( 5773) + 0 on 1920;
-  entity test_alu at 328( 7088) + 0 on 1921;
-  architecture arch_test_alu of test_alu at 335( 7192) + 0 on 1922;
-file . "sequential.vhd" "bc3ceafab089bd023cf6dacb30f71bd0f7338d79" "20211021124319.855":
-  package bus_mux_pkg at 1( 0) + 0 on 463;
-  entity reg at 13( 263) + 0 on 464;
-  architecture arch_reg of reg at 25( 496) + 0 on 465;
-  entity registerbank at 42( 754) + 0 on 466;
-  architecture arch_bankreg of registerbank at 61( 1247) + 0 on 467;
-file . "combi.vhd" "e8eed7b354ea2f293f75bcce59608ffc440a766d" "20211124155322.893":
-  entity mux4_1 at 6( 62) + 0 on 1895;
-  architecture multiplexeur of mux4_1 at 19( 365) + 0 on 1896;
-  entity add at 33( 650) + 0 on 1897;
-  architecture additionneur of add at 44( 858) + 0 on 1898;
-  entity addcarry1 at 54( 1076) + 0 on 1899;
-  architecture addret1 of addcarry1 at 64( 1245) + 0 on 1900;
-  entity addcarry at 73( 1382) + 0 on 1901;
-  architecture additionneurretenue of addcarry at 85( 1632) + 0 on 1902;
-  entity barrelshifter at 104( 1998) + 0 on 1903;
-  architecture barrelshift of barrelshifter at 117( 2282) + 0 on 1904;
-  entity alu at 146( 2886) + 0 on 1905;
-  architecture alu of alu at 168( 3438) + 0 on 1906;
-  entity extension at 225( 5264) + 0 on 1907;
-  architecture ext of extension at 237( 5500) + 0 on 1908;
+file . "tests.vhd" "4610ac8b3a62eb7419d0686b2f2b2b208e6c3ecc" "20211125123628.073":
+  entity test_reg at 1( 0) + 0 on 2126;
+  architecture arch_test_reg of test_reg at 8( 104) + 0 on 2127;
+  entity test_banc_reg at 60( 1059) + 0 on 2128;
+  architecture arch_test_banc_reg of test_banc_reg at 67( 1173) + 0 on 2129;
+  entity test_mux at 120( 2572) + 0 on 2130;
+  architecture arch_test_mux of test_mux at 127( 2676) + 0 on 2131;
+  entity test_add at 184( 3926) + 0 on 2132;
+  architecture arch_test_add of test_add at 191( 4030) + 0 on 2133;
+  entity test_addcarry at 224( 4700) + 0 on 2134;
+  architecture arch_test_addcarry of test_addcarry at 231( 4814) + 0 on 2135;
+  entity test_barrelshifter at 270( 5649) + 0 on 2136;
+  architecture arch_test_barrelshifter of test_barrelshifter at 277( 5773) + 0 on 2137;
+  entity test_alu at 328( 7088) + 0 on 2138;
+  architecture arch_test_alu of test_alu at 335( 7192) + 0 on 2139;
+file . "sequential.vhd" "bc3ceafab089bd023cf6dacb30f71bd0f7338d79" "20211125123627.917":
+  package bus_mux_pkg at 1( 0) + 0 on 2107;
+  entity reg at 13( 263) + 0 on 2108;
+  architecture arch_reg of reg at 25( 496) + 0 on 2109;
+  entity registerbank at 42( 754) + 0 on 2110;
+  architecture arch_bankreg of registerbank at 61( 1247) + 0 on 2111;
+file . "combi.vhd" "e8eed7b354ea2f293f75bcce59608ffc440a766d" "20211125123627.956":
+  entity mux4_1 at 6( 62) + 0 on 2112;
+  architecture multiplexeur of mux4_1 at 19( 365) + 0 on 2113;
+  entity add at 33( 650) + 0 on 2114;
+  architecture additionneur of add at 44( 858) + 0 on 2115;
+  entity addcarry1 at 54( 1076) + 0 on 2116;
+  architecture addret1 of addcarry1 at 64( 1245) + 0 on 2117;
+  entity addcarry at 73( 1382) + 0 on 2118;
+  architecture additionneurretenue of addcarry at 85( 1632) + 0 on 2119;
+  entity barrelshifter at 104( 1998) + 0 on 2120;
+  architecture barrelshift of barrelshifter at 117( 2282) + 0 on 2121;
+  entity alu at 146( 2886) + 0 on 2122;
+  architecture alu of alu at 168( 3438) + 0 on 2123;
+  entity extension at 225( 5264) + 0 on 2124;
+  architecture ext of extension at 237( 5500) + 0 on 2125;

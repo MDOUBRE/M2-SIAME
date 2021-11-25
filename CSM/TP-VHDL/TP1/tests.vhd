@@ -114,7 +114,7 @@ begin
     wait;
 
 end process P_BANC_TEST;
-    
+    ²
 end arch_test_Banc_Reg;
 
 LIBRARY IEEE;

@@ -1,0 +1,7 @@
+v 4
+file . "tests2.vhd" "899a39ad00b2107a28f58fd216ae715d2ceb3311" "20211125140342.467":
+  entity test_lecture at 1( 0) + 0 on 23;
+  architecture arch_test_lecture of test_lecture at 8( 120) + 4 on 24;
+file . "lecture.vhd" "61cb0b432cab0d849310d5749f47ae85cf312853" "20211125140342.388":
+  entity lecture at 1( 0) + 0 on 21;
+  architecture arch_lecture of lecture at 13( 307) + 0 on 22;
