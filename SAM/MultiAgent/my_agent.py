@@ -13,8 +13,7 @@ class Lumiere(Agent):
     env = 0
     termine = False
 
-    def __init__(self, partie, environnement, seuil, amas, etat=0, niveau=0, valeur_capt=0):
-        self.etat = etat
+    def __init__(self, partie, environnement, seuil, amas, niveau=0, valeur_capt=0):
         self.partie_salle = partie
         self.niveau = niveau
         self.valeur_captee = valeur_capt
@@ -30,42 +29,45 @@ class Lumiere(Agent):
     def getNiveau(self):
         return self.niveau
 
-    def getEtat(self):
-        return self.etat 
-
     def getTermine(self):
         return self.termine
 
     def on_perceive(self):
-        print("ON EST DANS ON_PERCEIVE LUMIERE")
-        self.valeur_captee=self.env.getLum()
-        print("VALEUR CAPTEE = ", self.env.getLumCaptee())
+        print("LUMIERE : ON_PERCEIVE")
+        self.valeur_captee=self.env.getLumCaptee()
+        #print("LUMIERE : VALEUR CAPTEE = ", self.valeur_captee)
 
     def on_decide(self):
-        print("ON EST DANS ON_DECIDE LUMIERE")
+        print("LUMIERE : ON_DECIDE")
         self.termine = False
         if(self.valeur_captee>self.seuil+5):
+            print("LUMIERE : on est dans le if")
             self.chaine="diminuer"
+            print(self.chaine)
         elif(self.valeur_captee<self.seuil-5):
+            print("LUMIERE : on est dans le elif")
             if(self.cycle_tmp==0):
                 self.cycle_tmp=1
             else:
                 self.chaine="augmenter"
+                print(self.chaine)
         else:
+            print("LUMIERE : on est dans le else")
             self.termine = True
    
     def on_act(self):
-        print("ON EST DANS ON_ACT LUMIERE")
-        if(self.chaine=="augmenter"):
+        print("LUMIERE : ON_ACT")
+        print("LUMIERE : niveau avant modif = ", self.niveau)
+        if(self.chaine=="augmenter" and self.niveau<=95):
             self.niveau += 5
-        elif(self.chaine=="diminuer"):
+        elif(self.chaine=="diminuer" and self.niveau>=5):
             self.niveau -= 5
+        print("LUMIERE : niveau après modif = ", self.niveau)
 
 
 class Volet(Agent):
     partie_salle = 0
     niveau = 0
-    etat = 0
     seuil=0
 
     chaine=""
@@ -75,8 +77,7 @@ class Volet(Agent):
     env=0
     termine = False
 
-    def __init__(self, partie, environnement, seuil, amas, etat=0, niveau=0, valeur_capt=0):
-        self.etat = etat
+    def __init__(self, partie, environnement, seuil, amas, niveau=0, valeur_capt=0):
         self.partie_salle = partie
         self.niveau=niveau
         self.valeur_captee=valeur_capt
@@ -86,44 +87,43 @@ class Volet(Agent):
 
         super().__init__(amas)
 
-    def getEtat(self):
-        return self.etat
-
     def getPartieSalle(self):
         return self.partie_salle
 
-    def ouvrir(self):
-        self.etat = 1
-
-    def fermer(self):
-        self.etat = 0  
-
     def getTermine(self):
         return self.termine
-    
+
+    def getNiveau(self):
+        return self.niveau
+
     def on_perceive(self):
-        print("ON EST DANS ON_PERCEIVE VOLET")
+        print("                                         VOLET : ON_PERCEIVE")
         self.valeur_captee=self.env.getLumCaptee()
-        print("VALEUR CAPTEE = ", self.env.getLumCaptee())
+        #print("VOLET : VALEUR CAPTEE = ", self.valeur_captee)
 
     def on_decide(self):
-        print("ON EST DANS ON_DECIDE VOLET")
+        print("                                         VOLET : ON_DECIDE")
         self.termine = False
         if(self.valeur_captee>self.seuil+5):
+            print("                                         VOLET : on est dans le if")
             if(self.cycle_tmp==0):
                 self.cycle_tmp=1
             else:
                 self.chaine="diminuer"
         elif(self.valeur_captee<self.seuil-5):
+            print("                                         VOLET : on est dans le elif")
             self.chaine="augmenter"
         else:
+            print("                                         VOLET : on est dans le else")
             self.termine = True
 
     def on_act(self):
-        print("ON EST DANS ON_ACT VOLET")
-        if(self.chaine=="augmenter"):
+        print("                                         VOLET : ON_ACT")
+        print("                                         VOLET : niveau avant modif = ", self.niveau)
+        if(self.chaine=="augmenter" and self.niveau<=95):
             self.niveau += 5
-        elif(self.chaine=="diminuer"):
+        elif(self.chaine=="diminuer" and self.niveau>=5):
             self.niveau -= 5
+        print("                                         VOLET : niveau après modif = ", self.niveau)
 
 

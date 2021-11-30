@@ -12,8 +12,8 @@ from pyAmakCore.classes.tools.schedulable import Schedulable
 from pyAmakCore.classes.tools.schedulerIHM import SchedulerIHM
 from pyAmakCore.classes.scheduler import Scheduler
 
-envir = Classe_connectee(54)
-amass = GestionClasse(envir, ExecutionPolicy.ONE_PHASE)
+envir = Classe_connectee()
+amass = GestionClasse(envir, 69, ExecutionPolicy.ONE_PHASE)
 
 #amass.cycle()
 
