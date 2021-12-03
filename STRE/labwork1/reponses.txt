@@ -66,22 +66,22 @@ Q2:
 	WCET doAROMZChannel: 162
 	observation: la fct doGyro appelle à chaque fois FixFilter comparé aux trois autres qui ne l'appelent que certaines fois
 Q3:
-	approximated WCET: 2526
+	approximated WCET: 7312
 Q4:
 	approximated total WCET: 4406
-	difference: 5192
+	difference: 5192	
 Q5:
-	WCET:
+	WCET: 4225
 Q6:
-	new smallest frequency:
+	new smallest frequency: 4,225MHz
 
 === Section 6 ===
 
 Q3
-	BB address calling the function pointer:
-	SWI instruction address:
+	BB address calling the function pointer: 6
+	SWI instruction address: 00000410
 Q4:
-	called functions:
+	called functions: "main one zero _exit"
 	removed line: [ ] multicall [ ] noreturn
 Q6:
 	WCET:

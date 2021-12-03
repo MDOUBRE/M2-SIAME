@@ -1,0 +1,109 @@
+digraph main {
+	graph [bb="0,0,330,1186",
+		label=<main function>,
+		lheight=0.21,
+		lp="165,11.5",
+		lwidth=1.07
+	];
+	node [label="\N"];
+	0	 [height=0.51389,
+		label=<entry>,
+		pos="164,1167.5",
+		shape=Mrecord,
+		width=0.75];
+	1	 [height=2.5556,
+		label=<<TABLE BORDER="0"><TR><TD><B>BB 1</B> (00000468)</TD></TR><HR/><TR><TD ALIGN="LEFT"><FONT COLOR="darkgreen"><I>control.c:21</I></FONT><BR ALIGN="left"/><FONT COLOR="blue">main:</FONT><BR ALIGN="left"/>00000468  stmdb sp!, \{fp, lr\}<BR ALIGN="left"/>0000046c  add fp, sp, #4<BR ALIGN="left"/>00000470  sub sp, sp, #16<BR ALIGN="left"/>00000474  str r0, [fp, -#16]<BR ALIGN="left"/>00000478  str r1, [fp, -#20]<BR ALIGN="left"/><FONT COLOR="darkgreen"><I>control.c:25</I></FONT><BR ALIGN="left"/>0000047c  ldr r3, [fp, -#16]<BR ALIGN="left"/>00000480  cmp r3, #0<BR ALIGN="left"/>00000484  bne 00000490<BR ALIGN="left"/></TD></TR></TABLE>>,
+		margin=0,
+		pos="164,1020",
+		shape=Mrecord,
+		width=2.3889];
+	0 -> 1	 [URL="1.dot",
+		pos="e,164,1111.6 164,1149.4 164,1141.8 164,1132.2 164,1121.8",
+		style=dashed];
+	2	 [height=1.1944,
+		label=<<TABLE BORDER="0"><TR><TD><B>BB 2</B> (00000490)</TD></TR><HR/><TR><TD ALIGN="LEFT"><FONT COLOR="darkgreen"><I>control.c:29</I></FONT><BR ALIGN="left"/>00000490  ldr r3, [fp, -#16]<BR ALIGN="left"/>00000494  cmp r3, #1<BR ALIGN="left"/>00000498  bgt 000004a8<BR ALIGN="left"/></TD></TR></TABLE>>,
+		margin=0,
+		pos="164,652",
+		shape=Mrecord,
+		width=2.2222];
+	1 -> 2	 [URL="1.dot",
+		label=<taken>,
+		lp="179,793.5",
+		pos="e,164,694.56 164,928.09 164,857.6 164,762.81 164,704.63"];
+	7	 [height=1,
+		label=<<TABLE BORDER="0"><TR><TD><B>BB 7</B> (00000488)</TD></TR><HR/><TR><TD ALIGN="LEFT"><FONT COLOR="darkgreen"><I>control.c:26</I></FONT><BR ALIGN="left"/>00000488  mov r0, #1<BR ALIGN="left"/>0000048c  bl 00000400<BR ALIGN="left"/></TD></TR></TABLE>>,
+		margin=0,
+		pos="249,855",
+		shape=Mrecord,
+		width=1.9167];
+	1 -> 7	 [URL="1.dot",
+		pos="e,230.62,890.67 211.22,928.33 216.33,918.42 221.34,908.69 225.96,899.72"];
+	3	 [height=1,
+		label=<<TABLE BORDER="0"><TR><TD><B>BB 3</B> (000004a8)</TD></TR><HR/><TR><TD ALIGN="LEFT"><FONT COLOR="darkgreen"><I>control.c:32</I></FONT><BR ALIGN="left"/>000004a8  ldr r3, [pc, #36]<BR ALIGN="left"/>000004ac  str r3, [fp, -#8]<BR ALIGN="left"/></TD></TR></TABLE>>,
+		margin=0,
+		pos="78,515",
+		shape=Mrecord,
+		width=2.1667];
+	2 -> 3	 [URL="1.dot",
+		label=<taken>,
+		lp="139,583.5",
+		pos="e,100.38,550.66 137.26,609.4 127.28,593.5 115.92,575.41 105.84,559.35"];
+	5	 [height=1.1944,
+		label=<<TABLE BORDER="0"><TR><TD><B>BB 5</B> (0000049c)</TD></TR><HR/><TR><TD ALIGN="LEFT"><FONT COLOR="darkgreen"><I>control.c:30</I></FONT><BR ALIGN="left"/>0000049c  ldr r3, [pc, #44]<BR ALIGN="left"/>000004a0  str r3, [fp, -#8]<BR ALIGN="left"/>000004a4  b 000004b0<BR ALIGN="left"/></TD></TR></TABLE>>,
+		margin=0,
+		pos="252,515",
+		shape=Mrecord,
+		width=2.1667];
+	2 -> 5	 [URL="1.dot",
+		pos="e,224.66,557.57 191.36,609.4 200.14,595.74 209.95,580.47 219.07,566.26"];
+	6	 [height=1.1944,
+		label=<<TABLE BORDER="0"><TR><TD><B>BB 6</B> (000004b0)</TD></TR><HR/><TR><TD ALIGN="LEFT"><FONT COLOR="darkgreen"><I>control.c:33</I></FONT><BR ALIGN="left"/>000004b0  ldr r3, [fp, -#8]<BR ALIGN="left"/>000004b4  mov lr, pc<BR ALIGN="left"/>000004b8  bx r3<BR ALIGN="left"/></TD></TR></TABLE>>,
+		margin=0,
+		pos="164,378",
+		shape=Mrecord,
+		width=2.125];
+	3 -> 6	 [URL="1.dot",
+		pos="e,137.15,420.78 100.37,479.36 109.95,464.1 121.32,446 131.78,429.33"];
+	4	 [height=1.7778,
+		label=<<TABLE BORDER="0"><TR><TD><B>BB 4</B> (000004bc)</TD></TR><HR/><TR><TD ALIGN="LEFT"><FONT COLOR="darkgreen"><I>control.c:33</I></FONT><BR ALIGN="left"/>000004bc  mov r3, r0<BR ALIGN="left"/><FONT COLOR="darkgreen"><I>control.c:34</I></FONT><BR ALIGN="left"/>000004c0  mov r0, r3<BR ALIGN="left"/>000004c4  sub sp, fp, #4<BR ALIGN="left"/>000004c8  ldmia sp!, \{fp, lr\}<BR ALIGN="left"/>000004cc  bx lr<BR ALIGN="left"/></TD></TR></TABLE>>,
+		margin=0,
+		pos="164,161",
+		shape=Mrecord,
+		width=2.3472];
+	10	 [URL="1.dot",
+		height=0.51389,
+		label=<exit>,
+		pos="164,41.5",
+		shape=Mrecord,
+		width=0.75];
+	4 -> 10	 [URL="1.dot",
+		pos="e,164,59.735 164,97.401 164,87.79 164,78.312 164,69.967",
+		style=dashed];
+	5 -> 6	 [URL="1.dot",
+		label=<taken>,
+		lp="226,446.5",
+		pos="e,191.34,420.57 224.64,472.4 215.86,458.74 206.05,443.47 196.93,429.26"];
+	8	 [height=0.5,
+		label=<<B>BB 8</B>(unknown)>,
+		pos="164,280",
+		shape=box,
+		width=1.4583];
+	6 -> 8	 [URL="1.dot",
+		pos="e,164,298.24 164,335.3 164,326.16 164,316.72 164,308.29",
+		style=dashed];
+	9	 [URL="1.dot",
+		height=0.5,
+		label=<<B>BB 9</B> (_exit)>,
+		pos="236,750",
+		shape=box,
+		width=1.1806];
+	7 -> 9	 [URL="1.dot",
+		pos="e,238.24,768.12 244.6,819.45 242.93,805.97 241.05,790.82 239.48,778.12",
+		style=dashed];
+	8 -> 4	 [URL="1.dot",
+		pos="e,164,224.55 164,261.93 164,254.27 164,244.8 164,234.75",
+		style=dashed];
+	9 -> 2	 [URL="1.dot",
+		pos="e,195.4,694.74 222.46,731.57 216.41,723.34 208.97,713.2 201.43,702.95",
+		style=dashed];
+}

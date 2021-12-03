@@ -1,9 +1,8 @@
 int main();
 
-void _exit(int r);
-/*void _exit(int r) {
+void _exit(int r) {
 	while(1);
-}*/
+}
 
 void _start(void) {
 	int r = main();
