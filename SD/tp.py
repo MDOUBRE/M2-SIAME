@@ -29,10 +29,17 @@ def my_join(IP, port):
         sendMsg(True,"join", IP, port, IP_perso, port_perso, num_noeud)
         # Attente de la confirmation ou non
         payload=receive()
+
+        
         if(payload['type']=="init" and payload['key']==num_noeud):
+            print("OKKKK pour la clé ", num_noeud)
             table_hachage = payload['data']
-            table_voisinage = payload['tv']
+            table_voisinage = receptionTv(payload['tv'])
+
             reponse = True
+        elif(payload['type']=="reject"):
+            print("Join refusé")
+            print("RE JOIN")
     my_new()
 
 def my_put(key, val, idUnique):
@@ -49,6 +56,12 @@ def majTv(payload):
     if(payload['key'] > table_voisinage[0][0]):
         table_voisinage[0] = [payload['key'], payload['ip'], payload['port']]
 
+def receptionTv(table):
+    table_voisinage[0] = table['precedent']
+    table_voisinage[1] = table['suivant']
+    print(table_voisinage)
+
+
 def majData(payload):
     table_hachage[payload['key']]= payload['val']
 
@@ -64,115 +77,128 @@ def calcTvData(key):
 
 def sendMsg(my, type, IP, port, IP_source = "", port_source = 0, key = 0, data = {}, tv = [], keyResp = 0, val = 0, idUnique = 0, msgGet = 0, msgPut = 0, msgGest = 0, ok = 0):
     # Creation socket
-    tpsoc_envoi = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    tpsoc_envoi.bind(('', port_perso))
+    
         
     jsonFrame = { }
-    jsonFrame['type'] = json.loads(type)
+    jsonFrame['type'] = type
 
     if(type=="join" or type=="get_resp" or type=="resp" or type=="new", type=="put" or type=="get"):
-        jsonFrame['ip'] = json.loads(IP_source)
-        jsonFrame['port'] = json.loads(port_source)
+        jsonFrame['ip'] = IP_source
+        jsonFrame['port'] = port_source
 
-    if(type=="join" or type=="accept" or type=="init" or type=="get_resp" or type=="resp" or type=="new" or type=="put" or type=="get" or type=="answer" ):
-        jsonFrame['key'] = json.loads(key)
+    if(type=="join" or type=="reject" or type=="init" or type=="get_resp" or type=="resp" or type=="new" or type=="put" or type=="get" or type=="answer" ):
+        jsonFrame['key'] = key
 
     if(type=="init"):
-        jsonFrame['data']= json.loads(data)
-        jsonFrame['tv']= json.loads(tv)
+        jsonFrame['data']= data
+        jsonFrame['tv']= tv
 
     if(type=="put" or type=="answer"):
-        jsonFrame['val'] = json.loads(val)
+        jsonFrame['val'] = val
 
     if(type=="put" or type=="ack"):
-        jsonFrame['idUnique'] = json.loads(idUnique)
+        jsonFrame['idUnique'] = idUnique
 
     if(type=="ack"):
-        jsonFrame['ok'] = json.loads(ok)
+        jsonFrame['ok'] = ok
 
     if(type=="resp"):
-        jsonFrame['keyResp'] = json.loads(keyResp)
+        jsonFrame['keyResp'] = keyResp
 
     if(type=="quit"):
-        jsonFrame['msgGet'] = json.loads(msgGet)
-        jsonFrame['msgPut'] = json.loads(msgPut)
-        jsonFrame['msgGest'] = json.loads(msgGest)
+        jsonFrame['msgGet'] = msgGet
+        jsonFrame['msgPut'] = msgPut
+        jsonFrame['msgGest'] = msgGest
 
     # envoi du message et fermeture de la socket
+    print("\n")
+    print("Envoi de ", type)
+    print(IP)
+    print(port)
+    tpsoc_envoi = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    #co = False
     tpsoc_envoi.connect((IP, port))
-    tpsoc_envoi.send(json.dumps(jsonFrame))
+    #while(co==False):
+        #try:
+            #tpsoc_envoi.connect((IP, port))
+            #co=True
+        #except:
+            #print("fuck")
+    tpsoc_envoi.send(bytes(json.dumps(jsonFrame), "utf-8"))
     tpsoc_envoi.close()
 
 
 def receive():
     tpsoc_rcv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    tpsoc_rcv.bind(('', port_perso))
-    tpsoc_rcv.listen()
-    IP_reponse, Port_reponse = tpsoc_rcv.accept()
-    msg_recu = tpsoc_rcv.recv(255)
-    tpsoc_rcv.close()
-    payload = json.loads(msg_recu.payload.decode('utf-8'))
+    try:
+        tpsoc_rcv.bind(('', port_perso))
+    except socket.error as e:
+        print("ERREUR COUTE SUR LE PORT DE BASE")
+    tpsoc_rcv.listen(2)
+    try:
+        client, addr = tpsoc_rcv.accept()
+    except socket.error : 
+        print("ERREUR ACCEPT")
+    rec = ''
+    allReceived = False
+    try:
+        while(not allReceived):
+            incomingData = client.recv(2048).decode()
+            if(incomingData == ''):
+                allReceived = True
+            else:
+                rec += incomingData
+    except socket.error as e:
+        print("ERREUR RECEPTION DONNEES")
+        tpsoc_rcv.close()
+        return
+    payload = json.loads(rec)
+    #tpsoc_rcv.close()
     return payload
 
 
 def decide(payload):
+    # OK
     if(payload['type'] == "join"):
         key = payload['key']
         key_prec = table_voisinage[0][0]
-        key_suiv = table_voisinage[1][0]        
-        # envoie au prec si
-        # - compris entre prec et suivant
-        # - key>suivant et prec = 0
-        # - suiv<key<=65535 ou 0<=key<prec 
-        if((key<key_prec and key>key_suiv) or (key_prec==0 and key>key_suiv) or ((key<key_prec and key>=0) or (key>key_suiv and key<=65535))):
-            sendMsg(False, "join", table_voisinage[0][1], table_voisinage[0][2], payload['ip'], payload['port'], payload['key'])
-        # envoie au suiv si
-        # - compris entre moi et suivant
-        # - key>moi et suiv = 0
-        # - moi<key<=65535 ou 0<=key<suiv 
-        if((key>num_noeud and key<key_suiv) or (key_suiv==0 and key>num_noeud) or ((key<key_suiv and key>=0) or (key>num_noeud and key<=65535))):
-            sendMsg(False, "join", table_voisinage[1][1], table_voisinage[1][2], payload['ip'], payload['port'], payload['key'])            
-        elif(key == key_prec or key == key_suiv or key == num_noeud):
-            sendMsg(False, "reject", payload['ip'], payload['port'], "", 0, payload['key'])
-        else:
-            tv, data = calcTvData(key)
-            sendMsg(False, "init", payload['ip'], payload['port'], "", 0, payload['key'], tv, data)
+        key_suiv = table_voisinage[1][0]      
 
+        if(key==num_noeud or key==key_suiv or key==key_prec):
+            sendMsg(False, "reject", payload['ip'], payload['port'], "", 0, payload['key'])
+        elif(key_prec<num_noeud):
+            if(key>key_prec and key<num_noeud):
+                tv, data = calcTvData(key)
+                sendMsg(False, "init", payload['ip'], payload['port'], "", 0, payload['key'], tv, data)
+            else:
+                sendMsg(False, "join", table_voisinage[0][1], table_voisinage[0][2], payload['ip'], payload['port'], payload['key'])
+        elif(key_prec>num_noeud):
+            if((key>key_prec and key<=65535) and (key<num_noeud and key>=0)):
+                tv, data = calcTvData(key)
+                sendMsg(False, "init", payload['ip'], payload['port'], "", 0, payload['key'], tv, data)
+            else:
+                sendMsg(False, "join", table_voisinage[0][1], table_voisinage[0][2], payload['ip'], payload['port'], payload['key'])
+
+    # OK
     elif(payload['type'] == "get_resp"):
         key = payload['key']
         key_prec = table_voisinage[0][0]
         key_suiv = table_voisinage[1][0]   
-        # envoie au prec si
-        # - compris entre prec et suivant
-        # - key>suivant et prec = 0
-        # - suiv<key<=65535 ou 0<=key<prec 
-        if((key<key_prec and key>key_suiv) or (key_prec==0 and key>key_suiv) or ((key<key_prec and key>=0) or (key>key_suiv and key<=65535))):
-            sendMsg(False, "get_resp", table_voisinage[0][1], table_voisinage[0][2], payload['ip'], payload['port'], payload['key'])
-        # envoie au suiv si
-        # - compris entre moi et suivant
-        # - key>moi et suiv = 0
-        # - moi<key<=65535 ou 0<=key<suiv 
-        if((key>num_noeud and key<key_suiv) or (key_suiv==0 and key>num_noeud) or ((key<key_suiv and key>=0) or (key>num_noeud and key<=65535))):
-            sendMsg(False, "get_resp", table_voisinage[1][1], table_voisinage[1][2], payload['ip'], payload['port'], payload['key'])            
-        elif(key == key_prec):
+
+        if(key_prec<num_noeud):
+            if(key>key_prec and key<num_noeud):
+                sendMsg(False, "resp", payload['ip'], payload['port'], IP_perso, port_perso, payload['key'], {}, [], num_noeud)
+            else:
+                sendMsg(False, "get_resp", table_voisinage[0][1], table_voisinage[0][2], payload['ip'], payload['port'], payload['key'])
+        elif(key_prec>num_noeud):
+            if((key>key_prec and key<=65535) and (key<num_noeud and key>=0)):
+                sendMsg(False, "resp", payload['ip'], payload['port'], IP_perso, port_perso, payload['key'], {}, [], num_noeud)
+            else:
+                sendMsg(False, "get_resp", table_voisinage[0][1], table_voisinage[0][2], payload['ip'], payload['port'], payload['key'])
+        elif(key==key_prec):
             sendMsg(False, "resp", payload['ip'], payload['port'], table_voisinage[0][1], table_voisinage[0][2], payload['key'], {}, [], table_voisinage[0][0])
-        elif(key == key_suiv):
+        elif(key==key_suiv):
             sendMsg(False, "resp", payload['ip'], payload['port'], table_voisinage[1][1], table_voisinage[1][2], payload['key'], {}, [], table_voisinage[1][0])
-        else:
-            sendMsg(False, "resp", payload['ip'], payload['port'], IP_perso, port_perso, payload['key'], {}, [], num_noeud)
-
-        '''
-        # compris entre moi et suivant
-        if((key>num_noeud and key<=key_suiv) or (key_suiv==0 and key>num_noeud) or ((key<=key_suiv and key>=0) or (key>num_noeud and key<=65535))):
-            sendMsg(False, "resp", payload['ip'], payload['port'], table_voisinage[1][1], table_voisinage[1][2], payload['key'], {}, [], table_voisinage[1][0])
-
-        if(key<num_noeud and payload['key']<table_voisinage[1][0]):
-            sendMsg(False, "resp", payload['ip'], payload['port'], IP_perso, port_perso, payload['key'], {}, [], num_noeud)
-        elif(payload['key']>=table_voisinage[1][0]):
-            sendMsg(False, "get_resp", table_voisinage[1][1], table_voisinage[1][2], payload['ip'], payload['port'], payload['key'])
-        elif(payload['key']<num_noeud):
-            sendMsg(False, "get_resp", table_voisinage[0][1], table_voisinage[0][2], payload['ip'], payload['port'], payload['key'])
-        '''
 
     # OK
     elif(payload['type'] == "resp"):
@@ -182,6 +208,7 @@ def decide(payload):
 
     # OK
     elif(payload['type'] == "new"):
+        print("New : ", payload['key'], " ", payload['ip'], " ", payload['port'])
         if(payload['ip'] != IP_perso):
             sendMsg(False, "new", table_voisinage[0][1], table_voisinage[0][2], payload['ip'], payload['port'], payload['key'])
             if(num_noeud<table_voisinage[1][0]):
@@ -191,29 +218,45 @@ def decide(payload):
                 if((payload['key']>num_noeud and payload['key']<=65535) or (payload['key']<table_voisinage[1][0] and payload['key']>=0)):
                     majTv(payload)
     
+    # OK
     elif(payload['type']== "put"):
-        if(payload['key'] > table_voisinage[0][0] or payload['key'] < table_voisinage[1][0] or payload['key']==num_noeud):
-            majData(payload)
-            sendMsg(False, "ack", payload['ip'], payload['port'], "", 0, 0, {}, [], 0, 0, payload['idUnique'], 0, 0, 0, "ok")
-        else:
-            if(payload['key'] < table_voisinage[0][0]):
+        key = payload['key']
+        key_prec = table_voisinage[0][0] 
+
+        if(key_prec<num_noeud):
+            if(key>key_prec and key<=num_noeud):
+                majData(payload)
+                sendMsg(False, "ack", payload['ip'], payload['port'], "", 0, 0, {}, [], 0, 0, payload['idUnique'], 0, 0, 0, "ok")
+            else:
                 sendMsg(False, "put", table_voisinage[0][1], table_voisinage[0][2], payload['ip'], payload['port'], payload['key'], {}, [], 0, payload['val'], payload['idUnique'])
-            elif(payload['key'] > table_voisinage[1][0]):
-                sendMsg(False, "put", table_voisinage[1][1], table_voisinage[1][2], payload['ip'], payload['port'], payload['key'], {}, [], 0, payload['val'], payload['idUnique'])
-    
+        elif(key_prec>num_noeud):
+            if((key>key_prec and key<=65535) and (key<=num_noeud and key>=0)):
+                majData(payload)
+                sendMsg(False, "ack", payload['ip'], payload['port'], "", 0, 0, {}, [], 0, 0, payload['idUnique'], 0, 0, 0, "ok")
+            else:
+                sendMsg(False, "put", table_voisinage[0][1], table_voisinage[0][2], payload['ip'], payload['port'], payload['key'], {}, [], 0, payload['val'], payload['idUnique'])
+
     # OK
     elif(payload['ack']):
         print("La valeur du \'put\' ", payload['idUnique'], " a été acceptée")
 
+    # OK
     elif(payload['type']=="get"):
-        if(payload['key'] > table_voisinage[0][0] or payload['key'] < table_voisinage[1][0] or payload['key']==num_noeud):
-            val = getData(payload['key'])
-            sendMsg(False, "answer", payload['ip'], payload['port'], "", 0, payload['key'], {}, [], 0, val)
-        else:
-            if(payload['key'] < table_voisinage[0][0]):
+        key = payload['key']
+        key_prec = table_voisinage[0][0]
+
+        if(key_prec<num_noeud):
+            if(key>key_prec and key<=num_noeud):
+                val = getData(payload['key'])
+                sendMsg(False, "answer", payload['ip'], payload['port'], "", 0, payload['key'], {}, [], 0, val)
+            else:
                 sendMsg(False, "get", table_voisinage[0][1], table_voisinage[0][2], payload['ip'], payload['port'], payload['key'])
-            elif(payload['key'] > table_voisinage[1][0]):
-                sendMsg(False, "get", table_voisinage[1][1], table_voisinage[1][2], payload['ip'], payload['port'], payload['key'])
+        elif(key_prec>num_noeud):
+            if((key>key_prec and key<=65535) and (key<=num_noeud and key>=0)):
+                val = getData(payload['key'])
+                sendMsg(False, "answer", payload['ip'], payload['port'], "", 0, payload['key'], {}, [], 0, val)
+            else:
+                sendMsg(False, "get", table_voisinage[0][1], table_voisinage[0][2], payload['ip'], payload['port'], payload['key'])
 
     # OK
     elif(payload['type']=="answer"):
@@ -239,16 +282,20 @@ def decide(payload):
 
 stop = False
 
-if(len(sys.arv)==1):
+if(len(sys.argv)==2):
     port_perso = sys.argv[1]
-elif(len(sys.arv)==3):
+elif(len(sys.argv)==4):
     IP_join = sys.argv[2]
     port_join = int(sys.argv[3])
+    print(IP_join)
+    print(port_join)
     my_join(IP_join, port_join)
 else:
     print("ERROR lors du passage d'arguments!!!\n")
     stop = True
 
+'''
 while(stop == False):
     payload = receive()
     stop = decide(payload)
+'''
