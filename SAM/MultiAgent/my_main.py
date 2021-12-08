@@ -12,8 +12,10 @@ from pyAmakCore.classes.tools.schedulable import Schedulable
 from pyAmakCore.classes.tools.schedulerIHM import SchedulerIHM
 from pyAmakCore.classes.scheduler import Scheduler
 
+print("Rentrez un niveau seuil de luminosité pour al simulation\n")
+lum = int(input())
 envir = Classe_connectee()
-amass = GestionClasse(envir, 69, ExecutionPolicy.ONE_PHASE)
+amass = GestionClasse(envir, lum, ExecutionPolicy.ONE_PHASE)
 
 #amass.cycle()
 

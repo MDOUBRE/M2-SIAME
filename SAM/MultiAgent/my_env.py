@@ -20,7 +20,8 @@ class Classe_connectee(Environment):
     change_heure=False
 
     captation = 0
-    list_lum_heures = [[8,6*5], [9,6*20], [10, 6*40], [11, 6*70], [12, 6*100] , [13, 6*95] , [14, 6*90] , [15, 6*85] , [16, 6*80] , [17, 6*70] , [18, 6*60] , [19, 6*40] , [20, 6*20] , [21, 5]]
+    taux = 6
+    list_lum_heures = [[8,taux*5], [9,taux*20], [10, taux*40], [11, taux*70], [12, taux*100] , [13, taux*95] , [14, taux*90] , [15, taux*85] , [16, taux*80] , [17, taux*70] , [18, taux*60] , [19, taux*40] , [20, taux*20] , [21, taux*5]]
 
     def __init__(self, lum=0):
         self.lum_inte = lum
