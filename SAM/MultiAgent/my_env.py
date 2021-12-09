@@ -20,8 +20,9 @@ class Classe_connectee(Environment):
     change_heure=False
 
     captation = 0
-    taux = 6
-    list_lum_heures = [[8,taux*5], [9,taux*20], [10, taux*40], [11, taux*70], [12, taux*100] , [13, taux*95] , [14, taux*90] , [15, taux*85] , [16, taux*80] , [17, taux*70] , [18, taux*60] , [19, taux*40] , [20, taux*20] , [21, taux*5]]
+    taux = 1
+    list_lum_heures = [[8,taux*5], [9,taux*20], [10, taux*35], [11, taux*60], [12, taux*90] , [13, taux*100] , [14, taux*100] , [15, taux*90] , [16, taux*82] , [17, taux*71] , [18, taux*60] , [19, taux*40] , [20, taux*20] , [21, taux*5]]
+    list_importance_exte = [[8, 0.8, 0.2], [9, 0.64, 0.36], [10, 0.5, 0.5], [11, 0.4, 0.6], [12, 0.3, 0.7], [13, 0.25, 0.75], [14, 0.2, 0.8], [15, 0.3, 0.7], [16, 0.43, 0.57], [17, 0.55, 0.45], [18, 0.7, 0.3], [19, 0.8, 0.2], [15, 0.9, 0.1],[21, 0.95, 0.05]]
 
     def __init__(self, lum=0):
         self.lum_inte = lum
@@ -50,27 +51,16 @@ class Classe_connectee(Environment):
         self.niveauVolet = niveauVolet
 
     def getLumCaptee(self):
-        if((0.7*self.lum_inte) + ((self.list_lum_heures[self.heure-8][1]*(self.niveauVolet/100))*0.3)>=100):
-            #print("rapport lum inte = ",(0.7*self.lum_inte))
-            #print(self.list_lum_heures[self.heure-8][1])
-            #print(self.niveauVolet)
-            #print(self.list_lum_heures[self.heure-8][1]*(self.niveauVolet/100))
-            #print("rapport lum exte = ",(self.list_lum_heures[self.heure-8][1]*(self.niveauVolet/100))*0.3)     
+        niv_exte_heure = self.list_lum_heures[self.heure-8][1]
+        niv_import_inte = self.list_importance_exte[self.heure-8][1]
+        niv_import_exte = self.list_importance_exte[self.heure-8][2]
+
+        if((niv_import_inte*self.lum_inte) + ((niv_exte_heure*(self.niveauVolet/100))*niv_import_exte)>=100):
             return 100
-        elif((0.7*self.lum_inte) + ((self.list_lum_heures[self.heure-8][1]*(self.niveauVolet/100))*0.3)<=0):
-            #print("rapport lum inte = ",(0.7*self.lum_inte))
-            #print(self.list_lum_heures[self.heure-8][1])
-            #print(self.niveauVolet)
-            #print(self.list_lum_heures[self.heure-8][1]*self.niveauVolet)
-            #print("rapport lum exte = ",(self.list_lum_heures[self.heure-8][1]*(self.niveauVolet/100))*0.3)   
+        elif((niv_import_inte*self.lum_inte) + ((niv_exte_heure*(self.niveauVolet/100))*niv_import_exte)<=0):
             return 0
         else:
-            #print("rapport lum inte = ",(0.7*self.lum_inte))
-            #print(self.list_lum_heures[self.heure-8][1])
-            #print(self.niveauVolet)
-            #print(self.list_lum_heures[self.heure-8][1]*self.niveauVolet)
-            #print("rapport lum exte = ",(self.list_lum_heures[self.heure-8][1]*(self.niveauVolet/100))*0.3)   
-            return (0.7*self.lum_inte) + ((self.list_lum_heures[self.heure-8][1]*(self.niveauVolet/100))*0.3)
+            return (niv_import_inte*self.lum_inte) + ((niv_exte_heure*(self.niveauVolet/100))*niv_import_exte)
 
     def majLumInte(self, lum):
         self.lum_inte = lum
