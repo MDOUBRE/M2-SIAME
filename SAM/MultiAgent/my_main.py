@@ -17,9 +17,6 @@ lum = int(input())
 envir = Classe_connectee()
 amass = GestionClasse(envir, lum, ExecutionPolicy.ONE_PHASE)
 
-#amass.cycle()
-
-#scheduler = SchedulerIHM(amass)
 scheduler = Scheduler(amass)
 
 scheduler.start()

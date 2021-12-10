@@ -20,9 +20,16 @@ class Classe_connectee(Environment):
     change_heure=False
 
     captation = 0
-    taux = 1
+    taux = 1 # ATTENTION ==> changer de liste_importance_exte (en commentaires en dessous)
     list_lum_heures = [[8,taux*5], [9,taux*20], [10, taux*35], [11, taux*60], [12, taux*90] , [13, taux*100] , [14, taux*100] , [15, taux*90] , [16, taux*82] , [17, taux*71] , [18, taux*60] , [19, taux*40] , [20, taux*20] , [21, taux*5]]
-    list_importance_exte = [[8, 0.8, 0.2], [9, 0.64, 0.36], [10, 0.5, 0.5], [11, 0.4, 0.6], [12, 0.3, 0.7], [13, 0.25, 0.75], [14, 0.2, 0.8], [15, 0.3, 0.7], [16, 0.43, 0.57], [17, 0.55, 0.45], [18, 0.7, 0.3], [19, 0.8, 0.2], [15, 0.9, 0.1],[21, 0.95, 0.05]]
+    
+    # cette liste est utilisable seulement avec un taux de 1
+    # sinon il y a trop dimportances de luminosité extérieur et le progamme boucle sans fin
+    # car les changements de luminosité dans la salle la font sortir à chaque fois de l'intervalle accepté
+    list_importance_exte = [[8, 0.8, 0.2], [9, 0.64, 0.36], [10, 0.5, 0.5], [11, 0.4, 0.6], [12, 0.3, 0.7], [13, 0.25, 0.75], [14, 0.2, 0.8], [15, 0.3, 0.7], [16, 0.43, 0.57], [17, 0.55, 0.45], [18, 0.7, 0.3], [19, 0.8, 0.2], [20, 0.9, 0.1],[21, 0.95, 0.05]]
+    
+    # liste avec valeurs constantes àutiliser quand on veut changer le taux
+    #list_importance_exte = [[8, 0.8, 0.2], [9, 0.8, 0.2], [10, 0.8, 0.2], [11, 0.8, 0.2], [12, 0.8, 0.2], [13, 0.8, 0.2], [14, 0.8, 0.2], [15, 0.8, 0.2], [16, 0.8, 0.2], [17, 0.8, 0.2], [18, 0.8, 0.2], [19, 0.8, 0.2], [20, 0.8, 0.2],[21, 0.8, 0.2]]
 
     def __init__(self, lum=0):
         self.lum_inte = lum

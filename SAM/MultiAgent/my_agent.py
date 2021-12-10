@@ -40,7 +40,6 @@ class Lumiere(Agent):
     def on_perceive(self):
         print("LUMIERE : ON_PERCEIVE")
         self.valeur_captee=self.env.getLumCaptee()
-        #print("LUMIERE : VALEUR CAPTEE = ", self.valeur_captee)
 
     def on_decide(self):
         print("LUMIERE : ON_DECIDE")
@@ -113,7 +112,6 @@ class Volet(Agent):
         print("                                         VOLET : ON_PERCEIVE")
         self.valeur_captee=self.env.getLumCaptee()
         self.chaine = ""
-        #print("VOLET : VALEUR CAPTEE = ", self.valeur_captee)
 
     def on_decide(self):
         print("                                         VOLET : ON_DECIDE")

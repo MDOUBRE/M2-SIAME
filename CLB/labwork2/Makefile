@@ -46,6 +46,7 @@ DIST_SRC = \
 	src/Makefile \
 	src/startup.c \
 	src/tinyprintf.c \
+	src/ex6.c\
 	src/ex8.c \
 	src/ex9.c \
 	src/ex10.c \

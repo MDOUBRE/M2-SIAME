@@ -19,38 +19,32 @@
 #define WAIT_DELAY (APB1_CLK / WAIT_PSC)
 #define HALF_PERIOD (WAIT_DELAY/2)
 
-volatile int un_sur_deux = 0;
-
 void init(){
 	// output 
 	GPIOD_MODER = SET_BITS(GPIOD_MODER, GREEN_LED*2, 2, 0b01);
 	GPIOD_OTYPER &= ~(1<<GREEN_LED);
-	GPIOD_PUPDR = SET_BITS(GPIOD_PUPDR, GREEN_LED*2, 2, 0b01);
+	GPIOD_PUPDR = SET_BITS(GPIOD_PUPDR, GREEN_LED*2, 2, 0b00);
 }
 
 void handle_TIM4() {
+
+	if((GPIOD_ODR & (1<<GREEN_LED))==0){
+		printf("on allume\n");
+		printf("on allume 1\n");
+		GPIOD_BSRR = 1 << GREEN_LED;
+	}
+	else{
+		printf("on éteint\n");
+		GPIOD_BSRR = 1 << (16 + GREEN_LED);
+	}
 	TIM4_ARR = HALF_PERIOD;
-    //printf("%d\n", un_sur_deux);
-    if(un_sur_deux!=1){    
-        if((GPIOD_ODR & (1 << GREEN_LED))==0){
-            GPIOD_BSRR = 1 << GREEN_LED;
-        }
-        else{
-            GPIOD_BSRR = 1 << (GREEN_LED+16);
-        }
-        un_sur_deux+=1;
-    }
-    else{
-        un_sur_deux=0;
-    }
-	
-	TIM4_SR &= ~TIM_UIF;
+	TIM4_SR =0;
 }
 
 void init_TIM4(){
 	DISABLE_IRQS;
 
-	NVIC_ICER(TIM4_IRQ >> 5) |= 1 << (TIM4_IRQ & 0X1f);
+	NVIC_ICER(TIM4_IRQ>>5) |= 1 << (TIM4_IRQ & 0X1f);
 	NVIC_IRQ(TIM4_IRQ) = (uint32_t)handle_TIM4;
 	NVIC_IPR(TIM4_IRQ) = 0;
 
@@ -83,7 +77,7 @@ int main() {
 	// main loop
 	printf("Endless loop!\n");
 	while(1) {
-	}__asm("nop");
+	}
 
 }
 

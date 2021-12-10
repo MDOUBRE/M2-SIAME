@@ -52,7 +52,8 @@ class GestionClasse(Amas):
 
     def on_initial_agents_creation(self):
         liste_agents = []
-        for i in range(10):
+        # ici le nombre de lumières et volets que l'on met dans notre simulation
+        for i in range(1):
             tmp = Lumiere(0, self.env, self.seuil, self)
             tmp2 = Volet(0, self.env, self.seuil, self)
             liste_agents.append(tmp)
@@ -63,7 +64,6 @@ class GestionClasse(Amas):
     
     def on_cycle_begin(self):
         print("Début cycle")
-        #print(self.get_cycle())
         print("niveau volet = ", self.listeVolets[0].getNiveau())
         self.env.majNivVolet(self.listeVolets[0].getNiveau())
         print("Luminosité dans la salle = ", self.env.getLumCaptee())
@@ -121,8 +121,6 @@ class GestionClasse(Amas):
         self.grapheLumnosite_niveau.append(self.env.getLumCaptee())
 
         if(self.env.getHeure()==21):
-            #fig1 = plt.figure()
-            #fig1.add_
             plt.plot(self.grapheNiveauLumiere_heure, self.grapheNiveauLumiere_niveau)
             plt.title("Niveau des lumières selon l'heure (%)")
 
@@ -149,14 +147,3 @@ class GestionClasse(Amas):
             plt.show()
             yo = input()
             
-        
-
-        '''
-        self.heure_termine = True
-        for elem in self.listeLumieres:
-            if(elem.getTermine()==False):
-                self.heure_termine = False
-        if(self.heure_termine==True):
-            self.maj_conso()
-            self.env.change_heure=True
-        '''
