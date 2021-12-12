@@ -22,14 +22,20 @@ key_resp = 0
 answer_key = 0
 answer_val = 0
 
+cptGet = 0
+cptPut = 0
+
 
 def my_new():
     print(num_noeud)
     sendMsg(True,"new", table_voisinage[0][1], table_voisinage[0][2], IP_perso, port_perso, num_noeud)
 
 def my_join(IP, port):
-    reponse = False
     global num_noeud
+    global table_hachage
+    global table_voisinage
+
+    reponse = False
     while(reponse==False):
         num_noeud=random.randint(1, 65535)
         sendMsg(True,"join", IP, port, IP_perso, port_perso, num_noeud)
@@ -40,7 +46,6 @@ def my_join(IP, port):
             print("OKKKK pour la clé ", num_noeud)
             table_hachage = payload['data']
             table_voisinage = receptionTv(payload['tv'])
-
             reponse = True
         elif(payload['type']=="reject"):
             print("Join refusé")
@@ -50,12 +55,8 @@ def my_join(IP, port):
 def my_put(key, val, idUnique):
     sendMsg(True,"new", table_voisinage[0][1], table_voisinage[0][2], IP_perso, port_perso, key, 0, [], 0, val, idUnique)
 
-def my_get(key):
-    # IP et port à remplacer par le suivant dans a liste de voisinage
-    sendMsg(True,"get", table_voisinage[0][1], table_voisinage[0][2], IP_perso, port_perso, key)
-    #payload=receive()
-
-#def my_quit():
+def quit():
+    sendMsg(True, "quit", table_voisinage[0][1], table_voisinage[0][2], IP_perso, port_perso, 0, {}, [], 0, 0, 0, cptGet, cptPut, 0, 0)
 
 def majTv(payload):
     if(payload['key'] > table_voisinage[0][0]):
@@ -66,22 +67,31 @@ def receptionTv(table):
     table_voisinage[1] = table['suivant']
     print(table_voisinage)
 
-
 def majData(payload):
-    table_hachage[payload['key']]= payload['val']
+    table_hachage[payload['key']] = payload['val']
 
 def getData(key):
     return table_hachage[key]
 
 def calcTvData(key):
-    tv = []
+    tv = {"précédent":table_voisinage[0], "suivant":[num_noeud, IP_perso, port_perso]}
     data = {}
-    print("faire tv + data")
+    prec = table_voisinage[0][0]
+    if(prec < key):
+        for i in range(prec, key+1):
+            if(i in table_hachage):
+                data[i] = table_hachage[i]
+    elif(prec > key):
+        for i in range(prec, 65536):
+            if(i in table_hachage):
+                data[i] = table_hachage[i]
+        for i in range(0, key+1):
+            if(i in table_hachage):
+                data[i] = table_hachage[i]
     return tv, data
 
 
-def sendMsg(my, type, IP, port, IP_source = "", port_source = 0, key = 0, data = {}, tv = [], keyResp = 0, val = 0, idUniq = 0, msgGet = 0, msgPut = 0, msgGest = 0, ok = 0):
-       
+def sendMsg(my, type, IP, port, IP_source = "", port_source = 0, key = 0, data = {}, tv = [], keyResp = 0, val = 0, idUniq = 0, msgGet = 0, msgPut = 0, msgGest = 0, ok = 0):       
     jsonFrame = { }
     jsonFrame['type'] = type
 
@@ -133,6 +143,12 @@ def sendMsg(my, type, IP, port, IP_source = "", port_source = 0, key = 0, data =
 
 def decide(payload):
     global num_noeud
+    global answer_key
+    global answer_val
+    global ip_resp
+    global port_resp
+    global key_resp
+
     # OK
     if(payload["type"] == "join"):
         key = payload['key']
@@ -144,6 +160,7 @@ def decide(payload):
         elif(key_prec<num_noeud):
             if(key>key_prec and key<num_noeud):
                 tv, data = calcTvData(key)
+                table_voisinage[0] = [payload['key'], payload['ip'], payload['port']]
                 sendMsg(False, "init", payload['ip'], payload['port'], "", 0, payload['key'], tv, data)
             else:
                 sendMsg(False, "join", table_voisinage[0][1], table_voisinage[0][2], payload['ip'], payload['port'], payload['key'])
@@ -241,6 +258,7 @@ def decide(payload):
 
     elif(payload["type"] == "quit" and payload["msgGest"] == num_noeud):
         return True
+        quit()
     
     return False
 
@@ -266,7 +284,7 @@ def receive():
     allReceived = False
     try:
         while(not allReceived):
-            incomingData = client.recv(2048).decode()
+            incomingData = client.recv(BUFFER_SIZE).decode()
             if(incomingData == ''):
                 allReceived = True
             else:
