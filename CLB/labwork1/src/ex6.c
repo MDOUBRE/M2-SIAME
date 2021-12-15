@@ -30,7 +30,6 @@ void init(){
 
 void handle_TIM4() {
 	TIM4_ARR = HALF_PERIOD;
-    //printf("%d\n", un_sur_deux);
     if(un_sur_deux!=1){    
         if((GPIOD_ODR & (1 << GREEN_LED))==0){
             GPIOD_BSRR = 1 << GREEN_LED;

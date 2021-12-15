@@ -3,6 +3,8 @@
 #include <stm32f4/gpio.h>
 #include <stm32f4/tim.h>
 #include <stm32f4/nvic.h>
+#include <stm32f4/exti.h>
+#include <stm32f4/syscfg.h>
 
 // GPIOD
 #define GREEN_LED	12
@@ -17,13 +19,14 @@
 #define WAIT_PSC 1000
 #define WAIT_DELAY (APB1_CLK / WAIT_PSC)
 //#define HALF_PERIOD (WAIT_DELAY/2)
-#define DELAY_50 (WAIT_DELAY/10)
+#define DELAY_50 (WAIT_DELAY/5)
 
 int state_B1=0;
 int pushed_B1=0;
 int click=0;
 int last_b1 = 0;
-int HALF_PERIOD = 0
+int HALF_PERIOD = 0;
+volatile int un_sur_deux = 0;
 
 void init(){
 	// output 
@@ -33,10 +36,12 @@ void init(){
 }
 
 void handle_B1(){
+    //printf("on est dans le handle\n");
+      
     if((GPIOA_IDR & (1<<B1) !=0))
-	{
+    {      
         state_B1 = 1;
-        last_b1 = TIM4_CNT;
+        last_b1 = TIM4_CNT;        
     }
     else if(state_B1){
         int now = TIM4_CNT;
@@ -44,21 +49,28 @@ void handle_B1(){
             now+= DELAY_50;
         }
         if(now - last_b1 >= DELAY_50){
-            state_B1 = 0;
-            HALF_PERIOD += 200;
+            state_B1 = 0; 
+            if((GPIOD_ODR & (1 << GREEN_LED))==0){
+                GPIOD_BSRR = 1 << GREEN_LED;
+            }
+            else{
+                GPIOD_BSRR = 1 << (GREEN_LED+16);
+            }      
         }
     }
-    EXTI_IPR |= 1 << 0;   
+        
+    EXTI_PR |= 1 << 0;   
+    
 }
 
 void init_B1(){
     DISABLE_IRQS;
 
-    SET_BITS(SYSCFG_CR1, 0, 4, 0);
+    SET_BITS(SYSCFG_EXTICR1, 0, 4, 0);
     EXTI_RTSR |= 1 << 0;
     EXTI_FTSR |= 1 << 0;
     EXTI_IMR |= 1 << 0;
-    EXTI_IPR |= 1 << 0;
+    EXTI_PR |= 1 << 0;
 
     NVIC_ICER(EXTI0_IRQ >> 5) |= 1 << (EXTI0_IRQ & 0X1f);
     NVIC_IRQ(EXTI0_IRQ) = (uint32_t)handle_B1;

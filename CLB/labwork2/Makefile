@@ -4,7 +4,7 @@ APP = main
 STLINK_ROOT=stlink-1.5.1/build/Release
 LOG = stm32f4.log
 GDB = gdb-multiarch
-#GDB = gdb
+GDB = gdb
 GDB_FLAGS=-command ../scripts/gdbinit
 
 # rules
@@ -46,7 +46,7 @@ DIST_SRC = \
 	src/Makefile \
 	src/startup.c \
 	src/tinyprintf.c \
-	src/ex6.c\
+	src/ex7.c \
 	src/ex8.c \
 	src/ex9.c \
 	src/ex10.c \
