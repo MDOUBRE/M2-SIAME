@@ -42,6 +42,25 @@ ex4:
 ex5:
 	cd src; $(MAKE) ex5.elf
 
+ex6:
+	cd src, $(MAKE) ex6.elf
+
+ex7:
+	cd src; $(MAKE) ex7.elf
+
+ex8:
+        cd src; $(MAKE) ex8.elf
+
+ex9:
+        cd src; $(MAKE) ex9.elf
+
+ex10:
+        cd src; $(MAKE) ex10.elf
+
+ex11:
+        cd src; $(MAKE) ex11.elf
+
+
 debug_ex1: ex1
 	cd src; $(GDB) $(GDB_FLAGS) ex1.elf
 
@@ -56,6 +75,24 @@ debug_ex4: ex4
 
 debug_ex5: ex5
 	cd src; $(GDB) $(GDB_FLAGS) ex5.elf
+
+debug_ex6: ex6
+        cd src; $(GDB) $(GDB_FLAGS) ex6.elf
+
+debug_ex7: ex7
+        cd src; $(GDB) $(GDB_FLAGS) ex7.elf
+
+debug_ex8: ex8
+        cd src; $(GDB) $(GDB_FLAGS) ex8.elf
+
+debug_ex9: ex9
+        cd src; $(GDB) $(GDB_FLAGS) ex9.elf
+
+debug_ex10: ex10
+        cd src; $(GDB) $(GDB_FLAGS) ex10.elf
+
+debug_ex11: ex11
+        cd src; $(GDB) $(GDB_FLAGS) ex11.elf
 
 
 # build distribution
