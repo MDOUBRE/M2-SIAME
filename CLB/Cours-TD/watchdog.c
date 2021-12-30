@@ -23,6 +23,8 @@ int main(){
 
     enum{WAIT, BLINK, FREEZE} state = WAIT;
 
+    init();
+    
     while(1){
 
         switch (state)
