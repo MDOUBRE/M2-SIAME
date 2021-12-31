@@ -19,6 +19,17 @@
 // GPIODA
 #define USER_BUT	0
 
+void init(){
+	GPIOD_MODER = SET_BITS(GPIOD_MODER, GREEN_LED*2, 2, ObO1);
+	GPIOD_OTYPER = GPIOD_OTYPER &= ~ (1<<0);
+	GPIOD_PUPDR = SET_BITS(GPIOD_PUPDR, GREEN_LED*2, 2, ObOO);
+
+	GPIOA_MODER = SET_BITS(GPIOA_MODER, 3*2, 2, Ob11);
+	GPIOA_PUPDR = SET_BITS(GPIOA_PUPDR, 3*2, 2, ObO1);
+	ADC1_SQR3 = 3;
+	ADC1_CR1 = 0;
+	ADC1_CR2 = ADC_ADON;
+}
 
 int main() {
 	printf("\nStarting...\n");
@@ -30,11 +41,23 @@ int main() {
 	RCC_APB2ENR |= RCC_ADC1EN;
 
 	// initialization
+	init();
 
+	int x = 0;
 	// main loop
 	printf("Endless loop!\n");
 	while(1) {
-	}
+		ADC1_CR2 |= ADC_SWSTART;
+		while((ADC1_SR & ADC_EOC) == 0){
+			x = ADC1_DR;
+			if((x<1500) || (x >3000)){
+				GPIOD_BSRR = 1 << GREEN_LED;
+			}
+			else{
+				GPIOD_BSRR = 1 << (GREEN_LED+16);
+			}
+		}
+	}__asm("nop");
 
 }
 
