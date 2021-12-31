@@ -21,13 +21,13 @@ volatile enum{BLUE, GREEN, RED, ORANGE, DEB} state=DEB;
 
 void init()
 {
-
 	for(int i=12;i<16;i++)
 	{
 		GPIOD_MODER = SET_BITS(GPIOD_MODER, i*2, 2, 0b01);
 		GPIOD_OTYPER &= ~(1<<i);
 		GPIOD_PUPDR = SET_BITS(GPIOD_PUPDR, i*2, 2, 0b00);
 	}
+
 }
 
 int main() 

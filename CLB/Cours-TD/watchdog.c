@@ -42,6 +42,7 @@ int main(){
             }
             else if(pushed_b1)
             {
+                satte = WAIT;
                 TIM4_EGR |= TIM_UG;
             }
             break;

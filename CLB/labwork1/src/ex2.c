@@ -47,6 +47,7 @@ int main() {
 	printf("Endless loop!\n");
 	while(1) {
 
+		/*
 		if((GPIOA_IDR & (1<<B1) !=0))
 		{
 			pushed_B1=1;
@@ -63,6 +64,19 @@ int main() {
 			state_B1=0;
 			GPIOD_BSRR = 1 << (GREEN_LED+16);
 		}
+		*/
+		if((GPIOA_IDR & (1<<B1))!= 0){
+            pushed_B1 = 1;
+        }
+        else if(pushed_B1==1){
+            pushed_B1 = 0;
+            if((GPIOD_ODR & (1<<GREEN_LED))==0){
+                GPIOD_BSRR = 1 << GREEN_LED;
+            }
+            else{
+                GPIOD_BSRR = 1 << (GREEN_LED + 16);
+            }
+        }
 	}
 
 }
