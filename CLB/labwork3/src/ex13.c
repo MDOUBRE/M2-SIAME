@@ -53,16 +53,16 @@ void init(){
 	GPIOA_PUPDR = SET_BITS(GPIOA_PUPDR, 3*2, 2, ObO1);
 
 	// interrput adc
-	NVIC_ICER(ADC_IRQ >> 5) |= 1 << (ADC_IRQ & 0b1f);
-	NVIC_IRQ(ADC_IRQ) = (uint32_t)handle_ADC();
-	NVIC_IPR(ADC_IRQ) = 0;
-	NVIC_ICPR(ADC_IRQ >> 5) |= 1 << (ADC_IRQ & Ob1f);
-	NVIC_ISER(ADC_IRQ >> 5) |= 1 << (ADC_IRQ & Ob1f);
+	NVIC_ICER(ADC1_IRQ >> 5) |= 1 << (ADC1_IRQ & 0b1f);
+	NVIC_IRQ(ADC1_IRQ) = (uint32_t)handle_ADC();
+	NVIC_IPR(ADC1_IRQ) = 0;
+	NVIC_ICPR(ADC1_IRQ >> 5) |= 1 << (ADC1_IRQ & Ob1f);
+	NVIC_ISER(ADC1_IRQ >> 5) |= 1 << (ADC1_IRQ & Ob1f);
 
 	// init de ADC pour photomachin
-	ADC1_SQR3 = 3;
-	ADC1_CR1 = ADC_EOCIE;
-	ADC1_CR2 = ADC_ADON;
+	ADC1_SQR3 = 3; 			// PA3
+	ADC1_CR1 = ADC_EOCIE; 	// pour interrupt
+	ADC1_CR2 = ADC_ADON;	// AD Converter ON
 
 	// interrupt TIM4
 	NVIC_ICER(TIM4_IRQ >> 5) |= 1 << (TIM4_IRQ & 0b1f);
@@ -96,7 +96,6 @@ int main() {
 	// initialization
 	init();
 
-	int x = 0;
 	// main loop
 	printf("Endless loop!\n");
 	while(1) {
