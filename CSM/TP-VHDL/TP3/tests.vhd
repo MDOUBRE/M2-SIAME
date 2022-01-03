@@ -114,7 +114,7 @@ begin
     wait;
 
 end process P_BANC_TEST;
-    ²
+    
 end arch_test_Banc_Reg;
 
 LIBRARY IEEE;
@@ -471,7 +471,7 @@ signal E_LireMem_UB :     std_logic;
 begin 
 
 regf0 : entity work.Decodeur
-    port map (E_entree => E_entree,
+    port map (entree => E_entree,
                 MemToReg => E_MemToReg, 
                 RegDst => E_RegDst, 
                 UAL_Src => E_UAL_Src, 
@@ -483,7 +483,7 @@ regf0 : entity work.Decodeur
                 B_ne => E_B_ne,
                 B_lez => E_B_lez, 
                 B_gtz => E_B_gtz, 
-                B_gltz => E_B_gltz, 
+                B_bltz => E_B_bltz, 
                 B_gezn => E_B_gezn, 
                 B_gez_AI => E_B_gez_AI, 
                 B_ltz_AI => E_B_ltz_AI, 
@@ -498,28 +498,28 @@ regf0 : entity work.Decodeur
 
 P_Decode_TEST: process
 begin
-    E_CLK <= '1';
+    -- E_CLK <= '1';
     E_entree <= "000000"; -- m(0)
     wait for clkpulse;
 
-    E_CLK <= '0';
+    -- E_CLK <= '0';
     wait for clkpulse;
 
-    E_CLK <= '1';
+    -- E_CLK <= '1';
     E_entree <= "001110"; -- m(14)
     wait for clkpulse;
 
-    E_CLK <= '0';
+    -- E_CLK <= '0';
     wait for clkpulse;
 
-    E_CLK <= '1';
+    -- E_CLK <= '1';
     E_entree <= "011111"; -- m(31)
     wait for clkpulse;
 
-    E_CLK <= '0';
+    -- E_CLK <= '0';
     wait for clkpulse;
 
-    E_CLK <= '1';
+    -- E_CLK <= '1';
     E_entree <= "101001"; -- m(41)
     wait for clkpulse;
 
@@ -528,3 +528,60 @@ begin
 end process P_Decode_TEST;
 
 end arch_test_Decodeur;
+
+
+
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.NUMERIC_STD.ALL;
+
+entity test_Ctrl_ALU is
+end test_Ctrl_ALU;
+
+architecture arch_test_Ctrl_ALU of test_Ctrl_ALU is
+
+constant clkpulse : Time := 10 ns; -- 1/2 periode horloge
+
+signal E_UAL_Op :       std_logic_vector(1 downto 0);
+signal E_F :            std_logic_vector(5 downto 0);
+signal E_Op :           std_logic_vector(5 downto 0);
+signal E_Sel :          std_logic_vector(3 downto 0);
+signal E_Slt_slti :     std_logic;
+signal E_Enable_V :     std_logic;
+
+begin 
+
+regf0 : entity work.Ctrl_ALU
+    port map (UAL_Op => E_UAL_Op,
+                F => E_F, 
+                Op => E_Op, 
+                Sel => E_Sel, 
+                Slt_slti => E_Slt_slti,
+                Enable_V => E_Enable_V);    
+
+P_Ctrl_ALU_TEST: process
+begin
+    -- cas Sel <= "1001"
+    E_UAL_Op <= "10";
+    E_F <= "001010";
+    E_Op <= "000100";
+    wait for clkpulse;
+    wait for clkpulse;
+
+    -- cas Slt_slti = '1'
+    E_UAL_Op <= "11";
+    E_Op <= "000010";
+    wait for clkpulse;
+    wait for clkpulse;
+
+    -- cas Enable_V = '1'
+    E_UAL_Op <= "10";
+    E_F <= "100010";
+    wait for clkpulse;
+    wait for clkpulse;
+
+    wait;
+
+end process P_Ctrl_ALU_TEST;
+
+end arch_test_Ctrl_ALU;

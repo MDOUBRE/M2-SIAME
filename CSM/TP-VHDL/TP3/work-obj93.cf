@@ -1,0 +1,55 @@
+v 4
+file . "tests.vhd" "45f055ad4ad881a6ce42dd1206ac86f9a820eccf" "20220103105241.638":
+  entity test_reg at 1( 0) + 0 on 361;
+  architecture arch_test_reg of test_reg at 8( 104) + 0 on 362;
+  entity test_banc_reg at 60( 1059) + 0 on 363;
+  architecture arch_test_banc_reg of test_banc_reg at 67( 1173) + 0 on 364;
+  entity test_mux at 120( 2572) + 0 on 365;
+  architecture arch_test_mux of test_mux at 127( 2676) + 0 on 366;
+  entity test_add at 184( 3926) + 0 on 367;
+  architecture arch_test_add of test_add at 191( 4030) + 0 on 368;
+  entity test_addcarry at 224( 4700) + 0 on 369;
+  architecture arch_test_addcarry of test_addcarry at 231( 4814) + 0 on 370;
+  entity test_barrelshifter at 270( 5649) + 0 on 371;
+  architecture arch_test_barrelshifter of test_barrelshifter at 277( 5773) + 0 on 372;
+  entity test_alu at 328( 7088) + 0 on 373;
+  architecture arch_test_alu of test_alu at 335( 7192) + 0 on 374;
+  entity test_decodeur at 435( 9212) + 0 on 375;
+  architecture arch_test_decodeur of test_decodeur at 442( 9326) + 0 on 376;
+  entity test_ctrl_alu at 534( 11977) + 0 on 377;
+  architecture arch_test_ctrl_alu of test_ctrl_alu at 541( 12091) + 0 on 378;
+file . "combi.vhd" "24f99f82e886f0c6bc6aceec495d2d9970fd1a2a" "20220103105240.793":
+  entity mux4_1 at 6( 62) + 0 on 335;
+  architecture arch_mux of mux4_1 at 19( 365) + 0 on 336;
+  entity add at 33( 642) + 0 on 337;
+  architecture arch_add of add at 44( 850) + 0 on 338;
+  entity addcarry1 at 54( 1060) + 0 on 339;
+  architecture arch_addcarry1 of addcarry1 at 64( 1229) + 0 on 340;
+  entity addcarry at 73( 1380) + 0 on 341;
+  architecture arch_addcarry of addcarry at 85( 1630) + 0 on 342;
+  entity barrelshifter at 104( 1984) + 0 on 343;
+  architecture arch_barrelshift of barrelshifter at 117( 2268) + 0 on 344;
+  entity alu at 146( 2882) + 0 on 345;
+  architecture arch_alu of alu at 168( 3434) + 0 on 346;
+  entity extension at 225( 5270) + 0 on 347;
+  architecture arch_extension of extension at 237( 5506) + 0 on 348;
+file . "instr.vhd" "8738e7942d28135dbf5b5fa7c13477cbc0c51506" "20220103105241.291":
+  entity decodeur at 1( 0) + 0 on 355;
+  architecture arch_decodeur of decodeur at 17( 785) + 0 on 356;
+  entity ctrl_alu at 107( 4826) + 0 on 357;
+  architecture arch_ctrl_alu of ctrl_alu at 120( 5173) + 0 on 358;
+  entity ctrl_pc at 150( 6851) + 0 on 359;
+  architecture arch_ctrl_pc of ctrl_pc at 162( 7154) + 0 on 360;
+file . "sequential.vhd" "53f3011d34f68d00ca3b66f74b2ce896bd14159f" "20220103105240.724":
+  package bus_mux_pkg at 1( 0) + 0 on 330;
+  entity reg at 13( 263) + 0 on 331;
+  architecture arch_reg of reg at 25( 497) + 0 on 332;
+  entity registerbank at 42( 755) + 0 on 333;
+  architecture arch_bankreg of registerbank at 61( 1248) + 0 on 334;
+file . "memoire.vhd" "ab3899004ee6f33b1d2ad301377fb957eaa14068" "20220103105241.032":
+  entity lecture at 1( 0) + 0 on 349;
+  architecture arch_lecture of lecture at 13( 307) + 0 on 350;
+  entity ecriture at 68( 2720) + 0 on 351;
+  architecture arch_ecriture of ecriture at 80( 3016) + 0 on 352;
+  entity memoire at 102( 4112) + 0 on 353;
+  architecture arch_memoire of memoire at 116( 4514) + 0 on 354;

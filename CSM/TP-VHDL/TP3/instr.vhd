@@ -67,7 +67,7 @@ begin
 
     OpExt <= m(1) or m(4) or m(5) or m(6) or m(7) or m(8) or m(10) or m(32) or m(33) or m(35) or m(36) or m(37) or m(40) or m(41) or m(43);
 
-    ResgDst(0) <= m(0);
+    RegDst(0) <= m(0);
     RegDst(1) <= m(1) or m(3);
 
     WR_Reg <= m(0) or m(1) or m(3) or m(8) or m(9) or m(10) or m(11) or m(12) or m(13) or m(14) or m(15) or m(32) or m(33) or m(35) or m(36) or m(37);
@@ -75,15 +75,15 @@ begin
     UAL_Src(0) <= m(8) or m(9) or m(10) or m(11) or m(12) or m(13) or m(14) or m(15);
     UAL_Src(1) <= m(1) or m(15);
 
-    UAL_Op(0) <= m(1) m(4) or m(5) or m(6) or m(7) or m(8) or m(9) or m(10) or m(11) or m(12) or m(13) or m(14) or m(15);
-    UAL_Op(1) <= m(0) or m(8) or m(9) or  m(10) or m(11) or m(12) or m(13) or m(14) or m(15);
+    UAL_Op(0) <= m(1) or m(4) or m(5) or m(6) or m(7) or m(8) or m(9) or m(10) or m(11) or m(12) or m(13) or m(14) or m(15);
+    UAL_Op(1) <= m(0) or m(8) or m(9) or m(10) or m(11) or m(12) or m(13) or m(14) or m(15);
 
     B_eq <= m(4);
     B_ne <= m(5);
     B_lez <= m(6);
     B_gtz <= m(7);
     B_bltz <= m(1);
-    B_gez <= m(1);
+    B_gezn <= m(1);
     B_gez_AI <= m(1);
     B_ltz_AI <= m(1);
 
