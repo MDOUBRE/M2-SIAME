@@ -11,7 +11,7 @@
 
 
 // GPIOD
-#define GREEN_LED	12
+#define GREEN_LED	4
 #define ORANGE_LED	13
 #define RED_LED		14
 #define BLUE_LED	15
@@ -20,12 +20,12 @@
 #define USER_BUT	0
 
 void init(){
-	GPIOD_MODER = SET_BITS(GPIOD_MODER, GREEN_LED*2, 2, ObO1);
+	GPIOD_MODER = SET_BITS(GPIOD_MODER, GREEN_LED*2, 2, 0b01);
 	GPIOD_OTYPER = GPIOD_OTYPER &= ~ (1<<0);
-	GPIOD_PUPDR = SET_BITS(GPIOD_PUPDR, GREEN_LED*2, 2, ObOO);
+	GPIOD_PUPDR = SET_BITS(GPIOD_PUPDR, GREEN_LED*2, 2, 0b00);
 
-	GPIOA_MODER = SET_BITS(GPIOA_MODER, 3*2, 2, Ob11);
-	GPIOA_PUPDR = SET_BITS(GPIOA_PUPDR, 3*2, 2, ObO1);
+	GPIOA_MODER = SET_BITS(GPIOA_MODER, 3*2, 2, 0b11);
+	GPIOA_PUPDR = SET_BITS(GPIOA_PUPDR, 3*2, 2, 0b01);
 	ADC1_SQR3 = 3;
 	ADC1_CR1 = 0;
 	ADC1_CR2 = ADC_ADON;
@@ -48,14 +48,13 @@ int main() {
 	printf("Endless loop!\n");
 	while(1) {
 		ADC1_CR2 |= ADC_SWSTART;
-		while((ADC1_SR & ADC_EOC) == 0){
-			x = ADC1_DR;
-			if((x<1500) || (x >3000)){
-				GPIOD_BSRR = 1 << GREEN_LED;
-			}
-			else{
-				GPIOD_BSRR = 1 << (GREEN_LED+16);
-			}
+		while((ADC1_SR & ADC_EOC) == 0)__asm("nop");
+		x = ADC1_DR;
+		if(x > 900){	// dans la salle 014 avec une lampe torche
+			GPIOD_BSRR = 1 << GREEN_LED;
+		}
+		else{
+			GPIOD_BSRR = 1 << (GREEN_LED+16);
 		}
 	}__asm("nop");
 

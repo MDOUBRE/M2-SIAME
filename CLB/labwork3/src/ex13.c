@@ -19,6 +19,11 @@
 // GPIODA
 #define USER_BUT	0
 
+#define WAIT_PSC 1000
+#define WAIT_DELAY (APB1_CLK / WAIT_PSC)
+#define DELAY_100 (WAIT_DELAY / 10)
+
+
 int x = 0;
 
 void handle_TIM4(){
@@ -28,48 +33,47 @@ void handle_TIM4(){
 }
 
 void handle_ADC(){
-	while((ADC1_SR & ADC_EOC) == 0){
-		x = ADC1_DR;
-		if((x<1500) || (x >3000)){
-				GPIOD_BSRR = 1 << GREEN_LED;
-			}
-			else{
-				GPIOD_BSRR = 1 << (GREEN_LED+16);
-			}
-		}
+	while((ADC1_SR & ADC_EOC) == 0)__asm("nop");
+	x = ADC1_DR;
+	if(x > 900){
+		GPIOD_BSRR = 1 << GREEN_LED;
 	}
+	else{
+		GPIOD_BSRR = 1 << (GREEN_LED+16);
+	}	
 }
 
 void init(){
 	DISABLE_IRQS;
 
 	// LED
-	GPIOD_MODER = SET_BITS(GPIOD_MODER, GREEN_LED*2, 2, ObO1);
+	GPIOD_MODER = SET_BITS(GPIOD_MODER, GREEN_LED*2, 2, 0b01);
 	GPIOD_OTYPER = GPIOD_OTYPER &= ~ (1<<0);
-	GPIOD_PUPDR = SET_BITS(GPIOD_PUPDR, GREEN_LED*2, 2, ObOO);
+	GPIOD_PUPDR = SET_BITS(GPIOD_PUPDR, GREEN_LED*2, 2, 0b00);
 
 	// analog ADC
-	GPIOA_MODER = SET_BITS(GPIOA_MODER, 3*2, 2, Ob11);
-	GPIOA_PUPDR = SET_BITS(GPIOA_PUPDR, 3*2, 2, ObO1);
-
-	// interrput adc
-	NVIC_ICER(ADC1_IRQ >> 5) |= 1 << (ADC1_IRQ & 0b1f);
-	NVIC_IRQ(ADC1_IRQ) = (uint32_t)handle_ADC();
-	NVIC_IPR(ADC1_IRQ) = 0;
-	NVIC_ICPR(ADC1_IRQ >> 5) |= 1 << (ADC1_IRQ & Ob1f);
-	NVIC_ISER(ADC1_IRQ >> 5) |= 1 << (ADC1_IRQ & Ob1f);
+	GPIOA_MODER = SET_BITS(GPIOA_MODER, 3*2, 2, 0b11);
+	GPIOA_PUPDR = SET_BITS(GPIOA_PUPDR, 3*2, 2, 0b01);
 
 	// init de ADC pour photomachin
 	ADC1_SQR3 = 3; 			// PA3
 	ADC1_CR1 = ADC_EOCIE; 	// pour interrupt
 	ADC1_CR2 = ADC_ADON;	// AD Converter ON
 
+	// interrput adc
+	NVIC_ICER(ADC_IRQ >> 5) |= 1 << (ADC_IRQ & 0X1f);
+	NVIC_IRQ(ADC_IRQ) = (uint32_t)handle_ADC;
+	NVIC_IPR(ADC_IRQ) = 0;
+	NVIC_ICPR(ADC_IRQ >> 5) |= 1 << (ADC_IRQ & 0X1f);
+	NVIC_ISER(ADC_IRQ >> 5) |= 1 << (ADC_IRQ & 0X1f);	
+	
+
 	// interrupt TIM4
-	NVIC_ICER(TIM4_IRQ >> 5) |= 1 << (TIM4_IRQ & 0b1f);
-	NVIC_IRQ(TIM4_IRQ) = (uint32_t)handle_TIM4();
+	NVIC_ICER(TIM4_IRQ >> 5) |= 1 << (TIM4_IRQ & 0X1f);
+	NVIC_IRQ(TIM4_IRQ) = (uint32_t)handle_TIM4;
 	NVIC_IPR(TIM4_IRQ) = 1;
-	NVIC_ICPR(TIM4_IRQ >> 5) |= 1 << (TIM4_IRQ & Ob1f);
-	NVIC_ISER(TIM4_IRQ >> 5) |= 1 << (TIM4_IRQ & Ob1f);
+	NVIC_ICPR(TIM4_IRQ >> 5) |= 1 << (TIM4_IRQ & 0X1f);
+	NVIC_ISER(TIM4_IRQ >> 5) |= 1 << (TIM4_IRQ & 0X1f);
 
 	// init TIM4
 	TIM4_CR1 = 0;

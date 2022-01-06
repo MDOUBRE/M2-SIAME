@@ -11,10 +11,10 @@
 
 
 // GPIOD
-#define LED1 11
-#define LED2 12
-#define LED3 13
-#define LED4 14
+#define LED1 3
+#define LED2 4
+#define LED3 5
+#define LED4 6
 #define GREEN_LED	12
 #define ORANGE_LED	13
 #define RED_LED		14
@@ -58,38 +58,39 @@ int main() {
 	int valeur = 0;
 	while(1) {
 		ADC1_CR2 |= ADC_SWSTART;
-		while((ADC1_SR & ADC_EOF)==0){
-			valeur = ADC1_DR;
-			if(valeur >=0 && valeur < 1000){
-				GPIOD_BSRR = 1 << (LED1 + 16);
-				GPIOD_BSRR = 1 << (LED2 + 16);
-				GPIOD_BSRR = 1 << (LED3 + 16);
-				GPIOD_BSRR = 1 << (LED4 + 16);
-			}
-			else if(valeur>=1000 && valeur<2000){
-				GPIOD_BSRR = 1 << (LED1);
-				GPIOD_BSRR = 1 << (LED2 + 16);
-				GPIOD_BSRR = 1 << (LED3 + 16);
-				GPIOD_BSRR = 1 << (LED4 + 16);
-			}
-			else if(valeur >= 2000 && valeur < 3000){
-				GPIOD_BSRR = 1 << (LED1);
-				GPIOD_BSRR = 1 << (LED2);
-				GPIOD_BSRR = 1 << (LED3 + 16);
-				GPIOD_BSRR = 1 << (LED4 + 16);
-			}
-			else if(valeur >= 3000 && valeur < 4000){
-				GPIOD_BSRR = 1 << (LED1);
-				GPIOD_BSRR = 1 << (LED2);
-				GPIOD_BSRR = 1 << (LED3);
-				GPIOD_BSRR = 1 << (LED4 + 16);
-			}
-			else{ // valeur > 4000
-				GPIOD_BSRR = 1 << (LED1);
-				GPIOD_BSRR = 1 << (LED2);
-				GPIOD_BSRR = 1 << (LED3);
-				GPIOD_BSRR = 1 << (LED4);
-			}			
+		while((ADC1_SR & ADC_EOC)==0)__asm("nop");
+		valeur = ADC1_DR;
+		printf("%d\n", valeur);
+		if(valeur >=0 && valeur < 900){
+			GPIOD_BSRR = 1 << (LED1 + 16);
+			GPIOD_BSRR = 1 << (LED2 + 16);
+			GPIOD_BSRR = 1 << (LED3 + 16);
+			GPIOD_BSRR = 1 << (LED4 + 16);
 		}
+		else if(valeur>=900 && valeur<2000){
+			GPIOD_BSRR = 1 << (LED1);
+			GPIOD_BSRR = 1 << (LED2 + 16);
+			GPIOD_BSRR = 1 << (LED3 + 16);
+			GPIOD_BSRR = 1 << (LED4 + 16);
+		}
+		else if(valeur >= 2000 && valeur < 3000){
+			GPIOD_BSRR = 1 << (LED1);
+			GPIOD_BSRR = 1 << (LED2);
+			GPIOD_BSRR = 1 << (LED3 + 16);
+			GPIOD_BSRR = 1 << (LED4 + 16);
+		}
+		else if(valeur >= 3000 && valeur < 4000){
+			GPIOD_BSRR = 1 << (LED1);
+			GPIOD_BSRR = 1 << (LED2);
+			GPIOD_BSRR = 1 << (LED3);
+			GPIOD_BSRR = 1 << (LED4 + 16);
+		}
+		else{ // valeur > 4000
+			GPIOD_BSRR = 1 << (LED1);
+			GPIOD_BSRR = 1 << (LED2);
+			GPIOD_BSRR = 1 << (LED3);
+			GPIOD_BSRR = 1 << (LED4);
+		}			
+		
 	}__asm("nop");
 }
