@@ -1,16 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-#
-# Sample code to publish RPi's CPU temperature to a MQTT broker
-#    --> publish RPI CPU's temperature sensor
-#    <-- subscribe to RPI CPU's temperature sensor
-#
-# Thiebolt  aug.19  updated
-# Francois  apr.16  initial release
-#
-
-
-
 # #############################################################################
 #
 # Import zone
@@ -33,6 +20,10 @@ import logging
 # MQTT related imports
 import paho.mqtt.client as mqtt
 
+from smbus2 import SMBus
+
+import Adafruit_MCP9808.MCP9808 as MCP9808
+
 '''
 # To extend python librayrt search path
 _path2add='./libutils'
@@ -51,15 +42,12 @@ from libutils.rpi_utils import getCPUtemperature,getmac
 #
 MQTT_SERVER="192.168.0.215"
 MQTT_PORT=1883
-# Full MQTT_topic = MQTT_BASE + MQTT_TYPE
-MQTT_BASE_TOPIC = "1R1/014"
-MQTT_TYPE_TOPIC = "temperature"
-MQTT_PUB = "/".join([MQTT_BASE_TOPIC, MQTT_TYPE_TOPIC])
 
-# First subscription to same topic (for tests)
-MQTT_SUB = MQTT_PUB
-# ... then subscribe to <topic>/command to receive orders
-MQTT_SUB1 = "/".join([MQTT_PUB, "command"])
+MQTT_PUB_TEMP = "1R1/014/temperature"
+MQTT_PUB_LUM = "1R1/014/luminosity"
+
+MQTT_SUB_TEMP = "1R1/014/temperature/command"
+MQTT_SUB_LUM = "1R1/014/luminosity/command"
 
 MQTT_QOS=0 # (default) no ACK from server
 #MQTT_QOS=1 # server will ack every message
@@ -67,9 +55,12 @@ MQTT_QOS=0 # (default) no ACK from server
 MQTT_USER=""
 MQTT_PASSWD=""
 
-# Measurement related
-# seconds between each measure.
-measure_interleave = 5
+bus = SMBus(1)
+inter_lum = 20
+inter_temp = 60
+
+val_lum = 0
+val_temp = 0
 
 client      = None
 timer       = None
@@ -83,6 +74,35 @@ __shutdown  = False
 # Functions
 #
 
+def scan(force=False):
+    devices = []
+    for addr in range(0x03, 0x77 + 1):
+        read = SMBus.read_byte, (addr,), {'force':force}
+        write = SMBus.write_byte, (addr, 0), {'force':force}
+
+        for func, args, kwargs in (read, write):
+            try:
+                with SMBus(1) as bus:
+                    data = func(bus, *args, **kwargs)
+                    devices.append(addr)
+                    break
+            except OSError as expt:
+                if expt.errno == 16:
+                    pass
+
+    return devices
+
+def get_temp(addr):
+    sensor = MCP9808.MCP9808(addr, busnum=1)
+    sensor.begin()
+    temp = sensor.readTempC()
+    return str(temp)
+
+def get_lum(addr):
+    bus.write_byte_data(addr, 0x08, 0x03)
+    time.sleep(0.05)
+    val = bus.read_word_data(addr, 0xAC)    
+    return val
 
 #
 # Function ctrlc_handler
@@ -103,62 +123,65 @@ def stopMonitoring():
     timer.cancel()
     timer.join()
     del timer
-    client.unsubscribe(MQTT_SUB)
+    client.unsubscribe(MQTT_SUB_TEMP)
+    client.unsubscribe(MQTT_SUB_LUM)
     client.disconnect()
     client.loop_stop()
     del client
 
 #
 # threading.timer helper function
-def do_every (worker_func, iterations = 0):
+def do_every (interleave, worker_func, iterations = 0):
     global timer
-    global measure_interleave
     # launch new timer
     if ( iterations != 1):
         timer = threading.Timer (
-                        measure_interleave,
-                        do_every, [ worker_func, 0 if iterations == 0 else iterations-1])
-        timer.start();
+                        interleave,
+                        do_every, [interleave, worker_func, 0 if iterations == 0 else iterations-1])
+        timer.start()
     # launch worker function
-    worker_func();
+    worker_func()
 
 
 # --- MQTT related functions --------------------------------------------------
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
     log.info("Connected with result code : %d" % rc)
-
     if( rc == 0 ):
-        log.info("subscribing to topic: %s" % MQTT_SUB)
-        # Subscribe to topic
-        client.subscribe(MQTT_SUB)
-        client.subscribe(MQTT_SUB1)
+        client.subscribe(MQTT_SUB_LUM);
+        log.info("subscribing to topic: %s" % MQTT_SUB_LUM)
+        client.subscribe(MQTT_SUB_TEMP);
+        log.info("subscribing to topic: %s" % MQTT_SUB_TEMP)
 
 
 # The callback for a received message from the server.
 def on_message(client, userdata, msg):
-    global measure_interleave
+    global inter_temp
+    global inter_lum
+
     ''' process incoming message.
         WARNING: threaded environment! '''
     payload = json.loads(msg.payload.decode('utf-8'))
     log.debug("Received message '" + json.dumps(payload) + "' on topic '" + msg.topic + "' with QoS " + str(msg.qos))
 
-    # First test: subscribe to your own publish topic
-    # ... then remove later
-    if(msg.topic=="1R1/014/temperature"):
-        log.debug("Temperature is %s deg. %s" % (payload['value'],payload['value_units']))
-
+    print("Le topic est : ", msg.topic)
     if(msg.topic=="1R1/014/temperature/command"):
-        print("le topic est " + msg.topic)
-        print(getmac())
-        if(payload["dest"]== getmac()):
+        if(payload["dest"]=="ctemp1"):
             if(payload["order"]=="frequency"):
-                measure_interleave = int(payload["value"])
-                print("le measure_intervleave est maintenant de " + str(measure_interleave))
-            elif( payload["order"] == "capture"):
-                do_every(publishSensors,1)
-
-    log.warning("TODO: process incoming message!")
+                inter_temp = int(payload["value"])
+                print("L'inter_temp est maintenant de ", inter_temp)
+            elif(payload["order"]=="capture"):
+                do_every(inter_temp, publishTemp, 1)
+    
+    
+    if(msg.topic=="1R1/014/luminosity/command"):
+        if(payload["dest"]=="clum1"):
+            # passer par var globale addr_pub_lum pour choisir la val de quel capteur on pub
+            if(payload["order"]=="frequency"):
+                inter_lum = int(payload["value"])
+                print("L'inter_lum est maintenant de ", inter_lum)
+            elif(payload["order"]=="capture"):
+                do_every(inter_lum, publishLum, 1)
 
 
 # The callback to tell that the message has been sent (QoS0) or has gone
@@ -175,30 +198,36 @@ def on_log(mosq, obj, level, string):
 
 # --- neOCampus related functions ---------------------------------------------
 # Acquire sensors and publish
-def publishSensors():
-    # get CPU temperature (string)
-    CPU_temp = getCPUtemperature()
-    # add some randomisation to the temperature (float)
-    _fcputemp = float(CPU_temp) + random.uniform(-10,10)
-    # reconvert to string with quantization
-    CPU_temp = "{:.2f}".format(_fcputemp)
-    log.debug("RPi temperature = " + CPU_temp)
+def publishLum():
+    addr=0x39
+    # passer par var globale addr_pub_lum
+    lum = get_lum(addr)
+
     # generate json payload
     jsonFrame = { }
     jsonFrame['unitID'] = str(getmac())
-    jsonFrame['value'] = json.loads(CPU_temp)
+    jsonFrame['subID'] = str(addr)
+    jsonFrame['value'] = str(lum)
+    jsonFrame['value_units'] = 'lux'
+    # ... and publish it!
+    client.publish(MQTT_PUB_LUM, json.dumps(jsonFrame), MQTT_QOS)
+    print("on publie : ", jsonFrame)
+
+
+def publishTemp():  
+    addr=0x18  
+    temp = get_temp(addr)
+    
+    # generate json payload
+    jsonFrame = { }
+    jsonFrame['unitID'] = str(getmac())
+    jsonFrame['subID'] = str(addr)
+    jsonFrame['value'] = str(temp)
     jsonFrame['value_units'] = 'celsius'
     # ... and publish it!
-    client.publish(MQTT_PUB, json.dumps(jsonFrame), MQTT_QOS)
+    client.publish(MQTT_PUB_TEMP, json.dumps(jsonFrame), MQTT_QOS)
+    print("on publie : ", jsonFrame)
 
-
-def publish_test():
-    jsonFrame = { }
-    jsonFrame['dest'] = 'all'
-    jsonFrame['order'] = 'frequency'
-    jsonFrame['value'] = "10"
-    jsonFrame['value_units'] = ''
-    client.publish(MQTT_PUB, json.dumps(jsonFrame), MQTT_QOS)
 
 # #############################################################################
 #
@@ -208,10 +237,10 @@ def publish_test():
 def main():
 
     # Global variables
-    global client, timer, log
+    global client, timer, log, inter_lum, inter_temp
 
     #
-    log.info("\n###\nSample application to publish RPI's temperature to [%s]\non server %s:%d" % (MQTT_PUB,str(MQTT_SERVER),MQTT_PORT))
+    log.info("\n###\nSample application to publish RPI's temperature to [%s] and to [%s]\non server %s:%d" % (MQTT_PUB_TEMP,MQTT_PUB_LUM, str(MQTT_SERVER),MQTT_PORT))
     log.info("(note: some randomization added to the temperature)")
     log.info("###")
 
@@ -232,7 +261,11 @@ def main():
     client.loop_start()
 
     # Launch Acquisition & publish sensors till shutdown
-    do_every(publishSensors)
+    liste_device = scan(True)
+    print("Devices connectes sur I2C : ", liste_device)
+
+    do_every(inter_lum, publishLum)
+    do_every(inter_temp, publishTemp)
 
     # waiting for all threads to finish
     if( timer is not None ):
