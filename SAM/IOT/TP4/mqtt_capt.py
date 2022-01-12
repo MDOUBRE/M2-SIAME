@@ -24,6 +24,8 @@ from smbus2 import SMBus
 
 import Adafruit_MCP9808.MCP9808 as MCP9808
 
+import RPi.GPIO as GPIO
+
 '''
 # To extend python librayrt search path
 _path2add='./libutils'
@@ -56,14 +58,18 @@ MQTT_USER=""
 MQTT_PASSWD=""
 
 bus = SMBus(1)
+liste_device = []
 inter_lum = 20
 inter_temp = 60
 
 val_lum = 0
 val_temp = 0
 
+bool_interupt = False
+
 client      = None
-timer       = None
+timer_lum   = None
+timer_temp  = None
 log         = None
 __shutdown  = False
 
@@ -101,7 +107,9 @@ def get_temp(addr):
 def get_lum(addr):
     bus.write_byte_data(addr, 0x08, 0x03)
     time.sleep(0.05)
-    val = bus.read_word_data(addr, 0xAC)    
+    val = bus.read_word_data(addr, 0xAC)
+    bus.write_byte_data(0x39,0xC0,0x03)
+    bus.write_byte_data(0x39,0x86,0x11) 
     return val
 
 #
@@ -118,11 +126,15 @@ def ctrlc_handler(signum, frame):
 # Function stoping the monitoring
 def stopMonitoring():
     global client
-    global timer
+    global timer_lum
+    global timer_temp
     log.info("[Shutdown] stop timer and MQTT operations ...");
-    timer.cancel()
-    timer.join()
-    del timer
+    timer_lum.cancel()
+    timer_lum.join()
+    del timer_lum
+    timer_temp.cancel()
+    timer_temp.join()
+    del timer_temp
     client.unsubscribe(MQTT_SUB_TEMP)
     client.unsubscribe(MQTT_SUB_LUM)
     client.disconnect()
@@ -131,14 +143,30 @@ def stopMonitoring():
 
 #
 # threading.timer helper function
-def do_every (interleave, worker_func, iterations = 0):
-    global timer
+def do_every_lum (worker_func, iterations = 0):
+    global timer_lum
+    global inter_lum
+    global bool_interupt
     # launch new timer
     if ( iterations != 1):
-        timer = threading.Timer (
-                        interleave,
-                        do_every, [interleave, worker_func, 0 if iterations == 0 else iterations-1])
-        timer.start()
+        timer_lum = threading.Timer (
+                        inter_lum,
+                        do_every_lum, [worker_func, 0 if iterations == 0 else iterations-1])
+        timer_lum.start()
+    # launch worker function
+    if(bool_interupt==False):
+        worker_func()
+    
+
+def do_every_temp (worker_func, iterations = 0):
+    global timer_temp
+    global inter_temp
+    # launch new timer
+    if ( iterations != 1):
+        timer_temp = threading.Timer (
+                        inter_temp,
+                        do_every_temp, [worker_func, 0 if iterations == 0 else iterations-1])
+        timer_temp.start()
     # launch worker function
     worker_func()
 
@@ -154,10 +182,14 @@ def on_connect(client, userdata, flags, rc):
         log.info("subscribing to topic: %s" % MQTT_SUB_TEMP)
 
 
+
 # The callback for a received message from the server.
 def on_message(client, userdata, msg):
     global inter_temp
     global inter_lum
+    global timer_lum
+    global timer_temp
+    global bool_interupt
 
     ''' process incoming message.
         WARNING: threaded environment! '''
@@ -166,28 +198,42 @@ def on_message(client, userdata, msg):
 
     print("Le topic est : ", msg.topic)
     if(msg.topic=="1R1/014/temperature/command"):
-        if(payload["dest"]=="ctemp1"):
+        if(payload["dest"]==getmac()):
             if(payload["order"]=="frequency"):
                 inter_temp = int(payload["value"])
+                #do_every_temp(publishTemp)
                 print("L'inter_temp est maintenant de ", inter_temp)
             elif(payload["order"]=="capture"):
-                do_every(inter_temp, publishTemp, 1)
+                #timer.cancel()
+                #timer_temp = threading.Timer (inter_temp, do_every_temp(publishTemp))
+                #timer.start()
+                do_every_temp(publishTemp, 1)
     
     
     if(msg.topic=="1R1/014/luminosity/command"):
-        if(payload["dest"]=="clum1"):
+        if(payload["dest"]==getmac()):
             # passer par var globale addr_pub_lum pour choisir la val de quel capteur on pub
             if(payload["order"]=="frequency"):
                 inter_lum = int(payload["value"])
+                #do_every_lum(publishLum)
                 print("L'inter_lum est maintenant de ", inter_lum)
+                if(inter_lum<=0):
+                    bool_interupt = True
+                    #bus.write_byte_data(0x39,0xC0,0x03)
+                    #bus.write_byte_data(0x39,0x86,0x11) 
+                else:
+                    bool_interupt = False
             elif(payload["order"]=="capture"):
-                do_every(inter_lum, publishLum, 1)
-
+                #timer.cancel()
+                #timer_lum = threading.Timer (inter_lum, do_every_lum(publishLum))
+                #timer.start()
+                do_every_lum(publishLum, 1)
 
 # The callback to tell that the message has been sent (QoS0) or has gone
 # through all of the handshake (QoS1 and 2)
 def on_publish(client, userdata, mid):
-    log.debug("mid: " + str(mid)+ " published!")
+    if(mid%10==0):
+        log.debug("mid: " + str(mid)+ " published!")
 
 def on_subscribe(mosq, obj, mid, granted_qos):
     log.debug("Subscribed: " + str(mid) + " " + str(granted_qos))
@@ -199,6 +245,7 @@ def on_log(mosq, obj, level, string):
 # --- neOCampus related functions ---------------------------------------------
 # Acquire sensors and publish
 def publishLum():
+    global liste_device
     addr=0x39
     # passer par var globale addr_pub_lum
     lum = get_lum(addr)
@@ -206,28 +253,38 @@ def publishLum():
     # generate json payload
     jsonFrame = { }
     jsonFrame['unitID'] = str(getmac())
-    jsonFrame['subID'] = str(addr)
+    jsonFrame['subID'] = str(hex(addr))
     jsonFrame['value'] = str(lum)
     jsonFrame['value_units'] = 'lux'
     # ... and publish it!
     client.publish(MQTT_PUB_LUM, json.dumps(jsonFrame), MQTT_QOS)
     print("on publie : ", jsonFrame)
+     
 
 
 def publishTemp():  
-    addr=0x18  
-    temp = get_temp(addr)
-    
-    # generate json payload
-    jsonFrame = { }
-    jsonFrame['unitID'] = str(getmac())
-    jsonFrame['subID'] = str(addr)
-    jsonFrame['value'] = str(temp)
-    jsonFrame['value_units'] = 'celsius'
-    # ... and publish it!
-    client.publish(MQTT_PUB_TEMP, json.dumps(jsonFrame), MQTT_QOS)
-    print("on publie : ", jsonFrame)
+    global liste_device
+    for i in range(len(liste_device)):
+        addr = liste_device[i]
+        if(int(addr)>=24 and int(addr)<=31):            
+            temp = get_temp(addr)            
+            # generate json payload
+            jsonFrame = { }
+            jsonFrame['unitID'] = str(getmac())
+            jsonFrame['subID'] = str(hex(addr))
+            jsonFrame['value'] = str(temp)
+            jsonFrame['value_units'] = 'celsius'
+            # ... and publish it!
+            client.publish(MQTT_PUB_TEMP, json.dumps(jsonFrame), MQTT_QOS)
+            print("on publie : ", jsonFrame)
 
+def interruptionTSL(self):
+    global bus, bool_interupt    
+    print("Interruption")
+    if(bool_interupt==True):
+        publishLum()
+    bus.write_byte_data(0x39,0xC0,0x03)
+    bus.write_byte_data(0x39,0x86,0x11) 
 
 # #############################################################################
 #
@@ -237,8 +294,23 @@ def publishTemp():
 def main():
 
     # Global variables
-    global client, timer, log, inter_lum, inter_temp
+    global client, timer_lum, timer_temp, log, inter_lum, inter_temp, liste_device
 
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(4, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.add_event_detect(4, GPIO.FALLING, callback = interruptionTSL)
+
+    bus.write_byte_data(0x39,0xC0,0x03)
+    bus.write_byte_data(0x39,0x86,0x11)    
+    # Threshold Low
+    bus.write_byte_data(0x39,0xA2,0x00)
+    bus.write_byte_data(0x39,0xA3,0x00)
+    # Threshold High
+    bus.write_byte_data(0x39,0xA4,0xE8)
+    bus.write_byte_data(0x39,0xA5,0x03)
+
+    print("on est la")
+    
     #
     log.info("\n###\nSample application to publish RPI's temperature to [%s] and to [%s]\non server %s:%d" % (MQTT_PUB_TEMP,MQTT_PUB_LUM, str(MQTT_SERVER),MQTT_PORT))
     log.info("(note: some randomization added to the temperature)")
@@ -262,14 +334,22 @@ def main():
 
     # Launch Acquisition & publish sensors till shutdown
     liste_device = scan(True)
+    #for i in range(len(liste_device)):
+    #    liste_device[i] = '{:02X}'.format(liste_device[i])
     print("Devices connectes sur I2C : ", liste_device)
 
-    do_every(inter_lum, publishLum)
-    do_every(inter_temp, publishTemp)
+    do_every_lum(publishLum)
+    do_every_temp(publishTemp)
+    
+    #while(1):
+    #    pass
 
     # waiting for all threads to finish
-    if( timer is not None ):
-        timer.join()
+    if( timer_lum is not None ):
+        timer_lum.join()
+    if( timer_temp is not None ):
+        timer_temp.join()
+    
 
 
 # Execution or import
