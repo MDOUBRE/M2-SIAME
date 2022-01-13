@@ -289,8 +289,8 @@ def publishTemp():
 
 def interruptionTSL(self):
     global bus, bool_interupt    
-    print("Interruption")
     if(bool_interupt==True):
+        print("Interruption")
         publishLum()
     bus.write_byte_data(0x39,0xC0,0x03)
     bus.write_byte_data(0x39,0x86,0x11) 
