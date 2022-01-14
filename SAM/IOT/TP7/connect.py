@@ -334,7 +334,7 @@ def main():
     list_shutter = []
     list_led = [[5, 6], [5, 6], [5, 6]]
     for i in range(1, 4) :
-        shut = shutter.Shutter(i, list_led[i-1][0], list_led[i-1][1])
+        shut = shutter.Shutter(i, list_led[0][0], list_led[0][1])
         list_shutter.append(shut)
 
     module = CommModule("", "", "1R1/014/shutter", list_shutter)
