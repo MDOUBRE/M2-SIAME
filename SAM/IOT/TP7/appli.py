@@ -71,27 +71,15 @@ def manage():
     global shut_id, shut_status, shut_order, temperature, luminosity, seuil
     global bool_action_volet, bool_lum_allume
 
-    print(luminosity)
-    print(seuil)
-    time.sleep(1)
     if(luminosity < seuil):
-        print("bon")
-        print(shut_order)
-        time.sleep(1)
         if(shut_order=="idle"):
-            print("bonsoir à vous")
-            time.sleep(1)
             bool_action_volet = False
             if(shut_status!="open"):
                 publish_cmd_up()
-                print("ouverture volets")
-                time.sleep(1)
                 bool_action_volet = True
             else:
                 GPIO.output(led_lum, GPIO.HIGH)
-                print("allumage lumiere")
                 bool_lum_allume = True
-                time.sleep(1)
         
     elif(luminosity>seuil+1000):
         if(shut_order=="idle"):
@@ -163,7 +151,7 @@ def on_message(client, userdata, msg):
     if(msg.topic=="1R1/014/luminosity"):
         if(payload['unitID']==getmac()):
             luminosity = int(payload['value'])
-            print("lux = ", luminosity)
+            print("luminosité = ", luminosity, " lux")
 
     if(msg.topic=="1R1/014/shutter"):
         shut_id = str(payload['unitID'])
@@ -177,15 +165,17 @@ def on_message(client, userdata, msg):
                 bool_presence = True
             elif(payload['value']=="Change" and bool_presence==True):
                 bool_presence = False
+                GPIO.output(led_lum, GPIO.LOW)
+
   
     print(luminosity)
-    print(seuil)
-    print(bool_presence)
+    #print(seuil)
+    #print(bool_presence)
     if((luminosity<seuil or luminosity>seuil+1000) and bool_presence==True):
 
-        print("on est la")
+        #print("on est la")
         manage()
-        if(bool_action_volet == False):
+        if(bool_action_volet == False  and bool_lum_allume==False):
             publish_cmd_capt_lum()
 
 
@@ -249,6 +239,11 @@ def main():
 
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(led_lum, GPIO.OUT)
+    GPIO.setup(6, GPIO.OUT)
+    GPIO.setup(13, GPIO.OUT)
+    GPIO.output(led_lum, GPIO.LOW)
+    GPIO.output(6, GPIO.LOW)
+    GPIO.output(13, GPIO.LOW)
 
     seuil = int(sys.argv[1])
     
@@ -274,6 +269,7 @@ def main():
     client.loop_start()
     
     publish_cmd_status()
+    publish_cmd_capt_lum()
 
     while(1):
         pass

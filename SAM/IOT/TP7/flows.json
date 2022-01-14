@@ -1,0 +1,412 @@
+[
+    {
+        "id": "f6f2187d.f17ca8",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "c43c39d7081407b2",
+        "type": "mqtt-broker",
+        "name": "mosquitto",
+        "broker": "192.168.0.215",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "sessionExpiry": ""
+    },
+    {
+        "id": "03907d6a337a7c51",
+        "type": "mongodb",
+        "hostname": "172.17.0.1",
+        "topology": "direct",
+        "connectOptions": "",
+        "port": "27017",
+        "db": "admin",
+        "name": ""
+    },
+    {
+        "id": "089d99937e70e28e",
+        "type": "mongodb out",
+        "z": "f6f2187d.f17ca8",
+        "mongodb": "03907d6a337a7c51",
+        "name": "mongodb",
+        "collection": "Test_insert",
+        "payonly": true,
+        "upsert": false,
+        "multi": false,
+        "operation": "insert",
+        "x": 840,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "a2c6c33948054bb4",
+        "type": "mqtt in",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "topic": "1R1/014/luminosity",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "c43c39d7081407b2",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 310,
+        "y": 280,
+        "wires": [
+            [
+                "089d99937e70e28e",
+                "5bdec7981383266a"
+            ]
+        ]
+    },
+    {
+        "id": "e747845aa58ce78b",
+        "type": "mqtt out",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "topic": "1R1/014/LED",
+        "qos": "2",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "c43c39d7081407b2",
+        "x": 1000,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "10134d50e176bab0",
+        "type": "mqtt in",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "topic": "domoticz/out",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "c43c39d7081407b2",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 130,
+        "y": 580,
+        "wires": [
+            [
+                "2b9f72b4f1a8945f"
+            ]
+        ]
+    },
+    {
+        "id": "0c69eedf201af6db",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 990,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "2b9f72b4f1a8945f",
+        "type": "json",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 290,
+        "y": 580,
+        "wires": [
+            [
+                "359832c878ee8bb7",
+                "f381e3629dfc7711"
+            ]
+        ]
+    },
+    {
+        "id": "c00a8bfc052e21f7",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "LED",
+        "func": "if(msg.payload.nvalue === 1)\n{\n    msg.payload = {\"status\": \"on\"};\n    return msg;\n}\nif(msg.payload.nvalue === 0)\n{\n    msg.payload = {\"status\": \"off\"};\n    return msg;\n}\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 650,
+        "y": 500,
+        "wires": [
+            [
+                "0c69eedf201af6db",
+                "e747845aa58ce78b"
+            ]
+        ]
+    },
+    {
+        "id": "359832c878ee8bb7",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 230,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "f381e3629dfc7711",
+        "type": "switch",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "property": "payload.idx",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "1",
+                "vt": "num"
+            },
+            {
+                "t": "eq",
+                "v": "2",
+                "vt": "num"
+            },
+            {
+                "t": "eq",
+                "v": "3",
+                "vt": "num"
+            },
+            {
+                "t": "eq",
+                "v": "4",
+                "vt": "num"
+            },
+            {
+                "t": "eq",
+                "v": "5",
+                "vt": "num"
+            },
+            {
+                "t": "eq",
+                "v": "6",
+                "vt": "num"
+            },
+            {
+                "t": "eq",
+                "v": "7",
+                "vt": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 7,
+        "x": 430,
+        "y": 640,
+        "wires": [
+            [
+                "c00a8bfc052e21f7"
+            ],
+            [
+                "19d673aad95fb1e7"
+            ],
+            [
+                "19d673aad95fb1e7"
+            ],
+            [
+                "7c8ee0384065e18f"
+            ],
+            [
+                "7c8ee0384065e18f"
+            ],
+            [
+                "812c294412a8dea5"
+            ],
+            [
+                "812c294412a8dea5"
+            ]
+        ]
+    },
+    {
+        "id": "19d673aad95fb1e7",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "Shutter1",
+        "func": "if(msg.payload.nvalue === 1)\n{\n    msg.payload = {\"dest\": \"1\",\"order\": \"up\"};\n    return msg;\n}\nif(msg.payload.nvalue === 0)\n{\n    msg.payload = {\"dest\": \"1\",\"order\": \"down\"};\n    return msg;\n}\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 660,
+        "y": 580,
+        "wires": [
+            [
+                "0c69eedf201af6db",
+                "c02fb606e8a7e07c"
+            ]
+        ]
+    },
+    {
+        "id": "7c8ee0384065e18f",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "Shutter2",
+        "func": "if(msg.payload.nvalue === 1)\n{\n    msg.payload = {\"dest\": \"2\",\"order\": \"up\"};\n    return msg;\n}\nif(msg.payload.nvalue === 0)\n{\n    msg.payload = {\"dest\": \"2\",\"order\": \"down\"};\n    return msg;\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 660,
+        "y": 640,
+        "wires": [
+            [
+                "0c69eedf201af6db",
+                "c02fb606e8a7e07c"
+            ]
+        ]
+    },
+    {
+        "id": "812c294412a8dea5",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "Shutter3",
+        "func": "if(msg.payload.nvalue === 1)\n{\n    msg.payload = {\"dest\": \"3\",\"order\": \"up\"};\n    return msg;\n}\nif(msg.payload.nvalue === 0)\n{\n    msg.payload = {\"dest\": \"3\",\"order\": \"down\"};\n    return msg;\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 660,
+        "y": 720,
+        "wires": [
+            [
+                "0c69eedf201af6db",
+                "c02fb606e8a7e07c"
+            ]
+        ]
+    },
+    {
+        "id": "9c0d2478724e2b8d",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "func": "msg.payload = { \"idx\" : 8, \"svalue\" : msg.payload.value}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 760,
+        "y": 360,
+        "wires": [
+            [
+                "a5ee977827fd352a",
+                "1b899f12a6259d6e"
+            ]
+        ]
+    },
+    {
+        "id": "a5ee977827fd352a",
+        "type": "mqtt out",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "topic": "domoticz/in",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "c43c39d7081407b2",
+        "x": 950,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "5bdec7981383266a",
+        "type": "json",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 590,
+        "y": 360,
+        "wires": [
+            [
+                "9c0d2478724e2b8d"
+            ]
+        ]
+    },
+    {
+        "id": "1b899f12a6259d6e",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 940,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "c02fb606e8a7e07c",
+        "type": "mqtt out",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "topic": "1R1/014/shutter/command",
+        "qos": "2",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "c43c39d7081407b2",
+        "x": 1020,
+        "y": 660,
+        "wires": []
+    }
+]

@@ -145,22 +145,23 @@ def stopMonitoring():
 
 #
 # threading.timer helper function
-def do_every_lum (worker_func, id2, iterations = 0):
+#def do_every_lum (worker_func, id2, iterations = 0):
+def do_every_lum (worker_func, iterations = 0):
     global timer_lum
     global inter_lum
     global bool_interupt
     global idlum
     # launch new timer
     
-    if(idlum == id2):
-        if ( iterations != 1):
-            timer_lum = threading.Timer (
-                            inter_lum,
-                            do_every_lum, [worker_func,id2, 0 if iterations == 0 else iterations-1])
-            timer_lum.start()
-        # launch worker function
-        if(bool_interupt==False):
-            worker_func()
+    #if(idlum == id2):
+    if ( iterations != 1):
+        timer_lum = threading.Timer (
+                        inter_lum,
+                        do_every_lum, [worker_func, 0 if iterations == 0 else iterations-1])
+        timer_lum.start()
+    # launch worker function
+    if(bool_interupt==False):
+        worker_func()
         
 
 def do_every_temp (worker_func, iterations = 0):
@@ -236,7 +237,8 @@ def on_message(client, userdata, msg):
                 #timer.cancel()
                 #timer_lum = threading.Timer (inter_lum, do_every_lum(publishLum))
                 #timer.start()
-                do_every_lum(publishLum, idlum, 0)
+                #(publishLum, idlum, 0)
+                do_every_lum(publishLum, 1)
 
 # The callback to tell that the message has been sent (QoS0) or has gone
 # through all of the handshake (QoS1 and 2)
@@ -312,11 +314,11 @@ def main():
     bus.write_byte_data(0x39,0xC0,0x03)
     bus.write_byte_data(0x39,0x86,0x11)    
     # Threshold Low
-    bus.write_byte_data(0x39,0xA2,0x00)
-    bus.write_byte_data(0x39,0xA3,0x00)
+    bus.write_byte_data(0x39,0xA2,0xE8)
+    bus.write_byte_data(0x39,0xA3,0x03)
     # Threshold High
-    bus.write_byte_data(0x39,0xA4,0xE8)
-    bus.write_byte_data(0x39,0xA5,0x03)
+    bus.write_byte_data(0x39,0xA4,0xD0)
+    bus.write_byte_data(0x39,0xA5,0x07)
     
     #
     log.info("\n###\nSample application to publish RPI's temperature to [%s] and to [%s]\non server %s:%d" % (MQTT_PUB_TEMP,MQTT_PUB_LUM, str(MQTT_SERVER),MQTT_PORT))
@@ -345,7 +347,8 @@ def main():
     #    liste_device[i] = '{:02X}'.format(liste_device[i])
     print("Devices connectes sur I2C : ", liste_device)
 
-    do_every_lum(publishLum, idlum)
+    #do_every_lum(publishLum, idlum)
+    do_every_lum(publishLum)
     do_every_temp(publishTemp)
     
     #while(1):
