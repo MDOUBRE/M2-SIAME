@@ -6,7 +6,8 @@ import logging as log
 
 BUFFER_SIZE = 2048
 
-IP_perso = "192.168.0.35"
+IP_perso = "192.168.0.35" #macbook
+IP_perso = "192.168.1.14" #pc windows
 #IP_perso="192.168.0.18"
 port_perso=1883
 
@@ -414,6 +415,8 @@ def get():
 ##########################################################################################################################
 
 stop = False
+
+IP_perso = socket.gethostbyname(socket.gethostname())
 
 if(len(sys.argv)==2):
     port_perso = int(sys.argv[1])

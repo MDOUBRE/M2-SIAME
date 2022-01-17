@@ -4,7 +4,7 @@ import random
 import sys
 import logging as log
 
-IP = "192.168.0.35"
+IP = socket.gethostbyname(socket.gethostname())
 port = 20000
 
 jsonFrame = { }
