@@ -9,9 +9,9 @@ port = 20000
 
 jsonFrame = { }
 jsonFrame['type'] = "get"
-jsonFrame['ip'] = "192.168.0.35"
-jsonFrame['port'] = 10000
-jsonFrame['key'] = 65534
+jsonFrame['ip'] = IP
+jsonFrame['port'] = 1883
+jsonFrame['key'] = 19359
 
 # envoi du message et fermeture de la socket
 print("\nEnvoi de ", jsonFrame)

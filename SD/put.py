@@ -9,9 +9,9 @@ port = 1883
 
 jsonFrame = { }
 jsonFrame['type'] = "put"
-jsonFrame['ip'] = "192.168.0.35"
+jsonFrame['ip'] = IP
 jsonFrame['port'] = 20000
-jsonFrame['key'] = 65534
+jsonFrame['key'] = 19359
 jsonFrame['val'] = 17
 jsonFrame['idUnique'] = 22
 
