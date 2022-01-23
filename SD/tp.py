@@ -24,7 +24,10 @@ answer_val = 0
 
 cptGet = 0
 cptPut = 0
-
+cptGest = 0
+cptGetrec = 0
+cptPutrec = 0
+cptGestrec = 0
 
 def creationChord():
     global num_noeud
@@ -112,9 +115,19 @@ def my_join(IP, port):
             print("OKKKK pour la clé ", num_noeud)
             print(payload)
             dico = payload['tv']
-            table_hachage = payload['data']
             table_voisinage.append(dico['precedent']) 
             table_voisinage.append(dico['suivant'])
+            liste_key = []
+            liste_value = []
+            datas = payload['data']
+            for key in datas.keys():
+                liste_key.append(key)
+            for elem in liste_key:
+                liste_value.append(datas[elem])
+            for i in range(len(liste_key)):
+                table_hachage[int(liste_key[i])] = liste_value[i]
+            print(table_hachage)
+
             reponse = True
         elif(payload['type']=="reject"):
             print("Join refusé")
@@ -130,8 +143,9 @@ def my_put(key, val, idUnique):
     while(envoi != 1):
         sendMsg(True,"new", table_voisinage[0][1], table_voisinage[0][2], IP_perso, port_perso, key, 0, [], 0, val, idUnique)
 
-def quit():
-    sendMsg(True, "quit", table_voisinage[0][1], table_voisinage[0][2], IP_perso, port_perso, 0, {}, [], 0, 0, 0, cptGet, cptPut, 0, 0)
+def quit(pkey):
+    global cptGestrec, cptGetrec, cptPutrec, cptGet, cptPut, cptGest
+    sendMsg(True, "quit", table_voisinage[0][1], table_voisinage[0][2], IP_perso, port_perso, pkey, {}, [], 0, 0, 0, cptGet + cptGetrec, cptPut + cptPutrec, cptGest + cptGestrec, 0)
 
 def majTv(payload):
     if(payload['key'] > table_voisinage[0][0]):
@@ -141,7 +155,10 @@ def majData(payload):
     table_hachage[payload['key']] = payload['val']
 
 def getData(key):
-    return table_hachage[key]
+    if(key in table_hachage):
+        return table_hachage[key]
+    else:
+        return -35536
 
 def calcTvData(key):
     tv = {'precedent':list(table_voisinage[0]), 'suivant':list([num_noeud, IP_perso, port_perso])}
@@ -169,7 +186,7 @@ def sendMsg(my, type, IP, port, IP_source = "", port_source = 0, key = 0, data =
         jsonFrame['ip'] = IP_source
         jsonFrame['port'] = port_source
 
-    if(type=="join" or type=="reject" or type=="init" or type=="get_resp" or type=="resp" or type=="new" or type=="put" or type=="get" or type=="answer" ):
+    if(type=="join" or type=="reject" or type=="init" or type=="get_resp" or type=="resp" or type=="new" or type=="put" or type=="get" or type=="answer" or type=="quit"):
         jsonFrame['key'] = key
 
     if(type=="init"):
@@ -213,16 +230,11 @@ def sendMsg(my, type, IP, port, IP_source = "", port_source = 0, key = 0, data =
 
 
 def decide(payload):
-    global num_noeud
-    global IP_perso
-    global port_perso
-    global answer_key
-    global answer_val
-    global ip_resp
-    global port_resp
-    global key_resp
-    global cptGet
-    global cptPut
+    global num_noeud, IP_perso, port_perso
+    global answer_key, answer_val
+    global ip_resp, port_resp, key_resp
+    global cptGet, cptPut, cptGest
+    global cptGestrec, cptGetrec, cptPutrec
 
     # OK
     if(payload["type"] == "join"):
@@ -299,6 +311,7 @@ def decide(payload):
     # OK
     elif(payload["type"]== "put"):
         cptPut += 1
+        cptGest += 1
         key = payload["key"]
         key_prec = table_voisinage[0][0] 
 
@@ -322,6 +335,7 @@ def decide(payload):
     # OK
     elif(payload["type"]=="get"):
         cptGet += 1
+        cptGest += 1
         key = payload["key"]
         key_prec = table_voisinage[0][0]
 
@@ -340,13 +354,27 @@ def decide(payload):
 
     # OK
     elif(payload["type"]=="answer"):
-        print("La valeur du noeud ", payload["key"], " est ",payload["val"]) 
+        if(payload["key"]==-35536):
+            print("Le noeud ", payload["key"], " n'a pas de valeur") 
+        else:
+            print("La valeur du noeud ", payload["key"], " est ",payload["val"]) 
         answer_key = payload["key"]
         answer_val = payload["val"]   
 
     # OK
-    elif(payload["type"] == "quit" and payload["msgGest"] == num_noeud):
-        quit()
+    elif(payload["type"] == "quit"):
+        cptGetrec = payload["msgGet"]
+        cptPutrec = payload["msgPut"]
+        cptGestrec = payload["msgGest"]
+        if(payload["key"]==num_noeud):
+            print("--------------------------------")
+            print("         Compteur final         ")
+            print("msgPut = ", cptPutrec + cptPut)
+            print("msgGet = ", cptGetrec + cptGet)
+            print("msgGest = ", cptGestrec + cptGest)
+            print("--------------------------------")
+        else:
+            quit(payload["key"])
         return True
     
     return False
@@ -449,3 +477,4 @@ while(stop == False):
         afficheMoi()
         afficheVoisins()
         afficheData()
+        print(table_hachage)

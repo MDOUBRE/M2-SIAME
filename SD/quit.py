@@ -4,16 +4,17 @@ import random
 import sys
 import logging as log
 
-liste_port = [1883, 10000, 20000, 30000]
+liste_port = [10000, 20000, 30000]
 
 IP = socket.gethostbyname(socket.gethostname())
-port = liste_port[random.randint(0, 3)]
+port = liste_port[random.randint(0, 2)]
 
 jsonFrame = { }
-jsonFrame['type'] = "get"
-jsonFrame['ip'] = IP
-jsonFrame['port'] = port
-jsonFrame['key'] = random.randint(0, 35534)
+jsonFrame['type'] = "quit"
+jsonFrame['key'] = 1
+jsonFrame['msgGet'] = 0
+jsonFrame['msgPut'] = 0
+jsonFrame['msgGest'] = 0
 
 # envoi du message et fermeture de la socket
 print("\nEnvoi de ", jsonFrame)
