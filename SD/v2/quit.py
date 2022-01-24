@@ -7,7 +7,7 @@ import logging as log
 liste_port = [10000, 20000, 30000]
 
 IP = socket.gethostbyname(socket.gethostname())
-port = liste_port[random.randint(0, 2)]
+port = liste_port[random.randint(0, 3)]
 
 jsonFrame = { }
 jsonFrame['type'] = "quit"
