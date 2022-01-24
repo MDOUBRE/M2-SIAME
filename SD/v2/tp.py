@@ -29,12 +29,19 @@ cptGetrec = 0
 cptPutrec = 0
 cptGestrec = 0
 
+join_en_cours = False
+join_pallier = 0
+data_join = {}
+tv_join = []
+key_join = 0
+
+
 def creationChord():
     global num_noeud
     global table_voisinage
-
     num_noeud = 1
-    table_voisinage = [[num_noeud, IP_perso, port_perso], [num_noeud, IP_perso, port_perso]]
+    for i in range(17):
+        table_voisinage.append([num_noeud, IP_perso, port_perso])
 
 
 def afficheMoi():
@@ -60,9 +67,11 @@ def afficheVoisins():
     print("Port : ", table_voisinage[0][2])
     print()
     print("                 SUIVANT                 ")
-    print("Key : ", table_voisinage[1][0])
-    print("IP : ", table_voisinage[1][1])
-    print("Port : ", table_voisinage[1][2])
+    for i in range(1, 16):
+        print("Key : ", table_voisinage[i][0])
+        print("IP : ", table_voisinage[i][1])
+        print("Port : ", table_voisinage[i][2])
+        print()
     print("-----------------------------------------")
     print()
 
@@ -90,9 +99,10 @@ def afficheData():
 
 
 def my_new():
-    envoi = 0
-    while(envoi != 1):
-        envoi = sendMsg(True,"new", table_voisinage[0][1], table_voisinage[0][2], IP_perso, port_perso, num_noeud)
+    if(table_voisinage[0][0]!=num_noeud):
+        envoi = 0
+        while(envoi != 1):
+            envoi = sendMsg(True,"new", table_voisinage[0][1], table_voisinage[0][2], IP_perso, port_perso, num_noeud)
 
 def receptionTv(table):
     global table_voisinage
@@ -114,9 +124,7 @@ def my_join(IP, port):
         if(payload['type']=="init" and payload['key']==num_noeud):
             print("OKKKK pour la clé ", num_noeud)
             print(payload)
-            dico = payload['tv']
-            table_voisinage.append(dico['precedent']) 
-            table_voisinage.append(dico['suivant'])
+            table_voisinage = payload['tv']
             liste_key = []
             liste_value = []
             datas = payload['data']
@@ -161,7 +169,6 @@ def getData(key):
         return -35536
 
 def calcTvData(key):
-    tv = {'precedent':list(table_voisinage[0]), 'suivant':list([num_noeud, IP_perso, port_perso])}
     data = {}
     prec = table_voisinage[0][0]
     if(prec < key):
@@ -175,7 +182,7 @@ def calcTvData(key):
         for i in range(0, key+1):
             if(i in table_hachage):
                 data[i] = table_hachage[i]
-    return tv, data
+    return data
 
 
 def sendMsg(my, type, IP, port, IP_source = "", port_source = 0, key = 0, data = {}, tv = [], keyResp = 0, val = 0, idUnique = 0, msgGet = 0, msgPut = 0, msgGest = 0, ok = 0):       
@@ -235,33 +242,52 @@ def decide(payload):
     global ip_resp, port_resp, key_resp
     global cptGet, cptPut, cptGest
     global cptGestrec, cptGetrec, cptPutrec
+    global tv_join, data_join, key_join, join_pallier, join_en_cours
 
     # OK
     if(payload["type"] == "join"):
-        key = payload['key']
+        key_join = payload['key']
         key_prec = table_voisinage[0][0]
         key_suiv = table_voisinage[1][0]      
 
-        if(key==num_noeud or key==key_suiv or key==key_prec):
+        if(key_join==num_noeud or key_join==key_suiv or key_join==key_prec):
             sendMsg(False, "reject", payload['ip'], payload['port'], "", 0, payload['key'])
         elif(key_prec<num_noeud):
-            if(key>key_prec and key<num_noeud):
-                tv, data = calcTvData(key)
+            if(key_join>key_prec and key_join<num_noeud):
+                ### ici on doit lancer les 16 requêtes
+                join_en_cours = True
+                data_join = calcTvData(key_join)
+                tv_join.append(table_voisinage[0])
                 table_voisinage[0] = [payload['key'], payload['ip'], payload['port']]
-                sendMsg(False, "init", payload['ip'], payload['port'], "", 0, payload['key'], data, tv)
+                sendMsg(False, "get_resp", table_voisinage[0][1], table_voisinage[0][2], IP_perso, port_perso, int(key_join + 1))
             else:
                 sendMsg(False, "join", table_voisinage[0][1], table_voisinage[0][2], payload['ip'], payload['port'], payload['key'])
         elif(key_prec>num_noeud):
-            if((key>key_prec and key<=65535) or (key<num_noeud and key>=0)):
-                tv, data = calcTvData(key)
+            if((key_join>key_prec and key_join<=65535) or (key_join<num_noeud and key_join>=0)):
+                ### ici on doit lancer les 16 requêtes
+                join_en_cours = True
+                data_join = calcTvData(key_join)
+                tv_join.append(table_voisinage[0])
                 table_voisinage[0] = [payload['key'], payload['ip'], payload['port']]
-                sendMsg(False, "init", payload['ip'], payload['port'], "", 0, payload['key'], data, tv)
+                sendMsg(False, "get_resp", table_voisinage[0][1], table_voisinage[0][2], IP_perso, port_perso, int(key_join + 1))
             else:
                 sendMsg(False, "join", table_voisinage[0][1], table_voisinage[0][2], payload['ip'], payload['port'], payload['key'])
         else:
-            tv, data = calcTvData(key) 
-            table_voisinage[0] = [payload['key'], payload['ip'], payload['port']]
-            sendMsg(False, "init", payload['ip'], payload['port'], "", 0, payload['key'], data, tv)
+            if(key_join < num_noeud):
+                for i in range(16):
+                    val = (key_join + pow(2, i))%35535
+                    if(val <=num_noeud and val>key_join):
+                        tv_join.append([num_noeud, IP_perso, port_perso])
+                    else:
+                        tv_join.append([key_join, payload["ip"], payload["port"]])
+            else:
+                for i in range(16):
+                    val = (key_join + pow(2, i))%35535
+                    if(val <=key_join and val>num_noeud):
+                        tv_join.append([key_join, payload["ip"], payload["port"]])
+                    else:                        
+                        tv_join.append([num_noeud, IP_perso, port_perso])
+            sendMsg(False, "init", payload["ip"], payload["port"], IP_perso, port_perso, payload["key"], data_join, tv_join)
 
     # OK
     elif(payload["type"] == "get_resp"):
@@ -289,6 +315,19 @@ def decide(payload):
         ip_resp = payload['ip']
         port_resp = payload['port']
         key_resp = payload['keyResp']
+        tmp = []
+        tmp.append(key_resp)
+        tmp.append(ip_resp)
+        tmp.append(port_resp)
+        tv_join.append(tmp)
+        join_pallier+=1
+        if(join_pallier==16):
+            join_pallier = 0
+            join_en_cours = False
+            sendMsg(False, "init", payload['ip'], payload['port'], "", 0, payload['key'], data_join, tv_join)
+        else:
+            sendMsg(False, "get_resp", table_voisinage[0][1], table_voisinage[0][2], IP_perso, port_perso, int(key_join + pow(2, join_pallier)))
+
 
     # OK
     elif(payload["type"] == "new"):
