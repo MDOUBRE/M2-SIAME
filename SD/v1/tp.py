@@ -236,6 +236,7 @@ def decide(payload):
     global cptGet, cptPut, cptGest
     global cptGestrec, cptGetrec, cptPutrec
 
+    cptGest += 1
     # OK
     if(payload["type"] == "join"):
         key = payload['key']
@@ -311,7 +312,6 @@ def decide(payload):
     # OK
     elif(payload["type"]== "put"):
         cptPut += 1
-        cptGest += 1
         key = payload["key"]
         key_prec = table_voisinage[0][0] 
 
@@ -335,7 +335,7 @@ def decide(payload):
     # OK
     elif(payload["type"]=="get"):
         cptGet += 1
-        cptGest += 1
+        
         key = payload["key"]
         key_prec = table_voisinage[0][0]
 
@@ -451,6 +451,7 @@ if(len(sys.argv)==2):
     creationChord()  
     afficheMoi()  
     afficheVoisins()
+    afficheData()
 elif(len(sys.argv)==4):
     port_perso = int(sys.argv[1])
     IP_join = sys.argv[2]
@@ -478,3 +479,6 @@ while(stop == False):
         afficheVoisins()
         afficheData()
         print(table_hachage)
+        print(cptGet)
+        print(cptPut)
+        print(cptGest)
